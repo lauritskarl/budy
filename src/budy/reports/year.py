@@ -52,21 +52,19 @@ def show_yearly_report(
                 )
             ).first()
 
-            total_spent = 0
-            if budget:
-                _, last_day = calendar.monthrange(target_year, target_month)
-                start_date = date(target_year, target_month, 1)
-                end_date = date(target_year, target_month, last_day)
+            _, last_day = calendar.monthrange(target_year, target_month)
+            start_date = date(target_year, target_month, 1)
+            end_date = date(target_year, target_month, last_day)
 
-                total_spent = (
-                    session.exec(
-                        select(func.sum(Transaction.amount)).where(
-                            Transaction.entry_date >= start_date,
-                            Transaction.entry_date <= end_date,
-                        )
-                    ).one()
-                    or 0
+            total_spent = (
+                session.scalar(
+                    select(func.sum(Transaction.amount)).where(
+                        Transaction.entry_date >= start_date,
+                        Transaction.entry_date <= end_date,
+                    )
                 )
+                or 0
+            )
 
             month_panel = render_budget_status(
                 budget=budget,

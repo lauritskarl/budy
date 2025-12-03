@@ -11,7 +11,7 @@ def render_budget_list(
 ) -> Table:
     """Renders a list of budgets for a specific year."""
     existing_budgets = [b for _, b in budgets if b]
-    total_budgeted = sum(b.amount for b in existing_budgets)
+    total_budgeted = sum(b.amount for b in existing_budgets) / 100.0
 
     table = Table(title=f"Budget List ({target_year})", show_footer=True)
 

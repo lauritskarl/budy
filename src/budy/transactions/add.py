@@ -15,14 +15,14 @@ app = Typer(no_args_is_help=True)
 @app.command(name="a", hidden=True)
 def create_transaction(
     amount: Annotated[
-        int,
+        float,
         Option(
             "--amount",
             "-a",
-            min=1,
+            min=0.01,
             max=9999999,
             prompt=True,
-            help="Set the transaction amount.",
+            help="Set the transaction amount (in dollars/euros).",
         ),
     ],
     entry_date: Annotated[
@@ -39,7 +39,9 @@ def create_transaction(
     with Session(engine) as session:
         final_date = entry_date.date() if entry_date else date.today()
 
-        transaction = Transaction(amount=amount, entry_date=final_date)
+        amount_cents = int(round(amount * 100))
+
+        transaction = Transaction(amount=amount_cents, entry_date=final_date)
 
         session.add(transaction)
         session.commit()
@@ -47,7 +49,7 @@ def create_transaction(
 
         print(
             f"[green]✓ Added![/] Transaction [bold]#{transaction.id}[/]: "
-            f"[bold]${transaction.amount}[/bold] on {transaction.entry_date.strftime('%B %d, %Y')}"
+            f"[bold]${transaction.amount:,.2f}[/bold] on {transaction.entry_date.strftime('%B %d, %Y')}"
         )
 
 

@@ -58,12 +58,12 @@ def show_monthly_report(
         end_date = date(target_year, target_month, last_day)
 
         total_spent = (
-            session.exec(
+            session.scalar(
                 select(func.sum(Transaction.amount)).where(
                     Transaction.entry_date >= start_date,
                     Transaction.entry_date <= end_date,
                 )
-            ).one()
+            )
             or 0
         )
 

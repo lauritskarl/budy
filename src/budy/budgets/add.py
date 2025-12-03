@@ -19,7 +19,7 @@ console = Console()
 @app.command(name="a", hidden=True)
 def create_budget(
     target_amount: Annotated[
-        int,
+        float,
         Option(
             "--amount",
             "-a",
@@ -56,6 +56,8 @@ def create_budget(
         final_target_month = target_month if target_month else current_date.month
         final_target_year = target_year if target_year else current_date.year
 
+        target_cents = int(round(target_amount * 100))
+
         month_name = calendar.month_name[final_target_month]
 
         existing_budget = session.exec(
@@ -71,24 +73,24 @@ def create_budget(
                     f"A budget for [b]{month_name} {final_target_year}[/] already exists."
                 )
             )
+
+            old_amount_display = existing_budget.amount / 100.0
             console.print(
-                f"Change: [red]${existing_budget.amount}[/] -> [green]${target_amount}[/]\n"
+                f"Change: [red]${old_amount_display:,.2f}[/] -> [green]${target_amount:,.2f}[/]\n"
             )
 
             if not confirm(f"Overwrite the {month_name} budget?"):
                 print("[dim]Operation cancelled.[/]")
                 raise Exit(code=0)
 
-            old_amount = existing_budget.amount
-
-            existing_budget.amount = target_amount
+            existing_budget.amount = target_cents
             session.add(existing_budget)
             session.commit()
             session.refresh(existing_budget)
 
             print(
                 f"[green]✓ Updated![/] {month_name} {final_target_year}: "
-                f"[strike dim]${old_amount}[/] -> [bold green]${target_amount}[/]"
+                f"[strike dim]${old_amount_display:,.2f}[/] -> [bold green]${target_amount:,.2f}[/]"
             )
             return
 
@@ -103,7 +105,7 @@ def create_budget(
         session.refresh(budget)
 
         print(
-            f"[green]✓ Added![/] Budget for [bold]{month_name} {final_target_year}[/] set to [green]${target_amount}[/]"
+            f"[green]✓ Added![/] Budget for [bold]{month_name} {final_target_year}[/] set to [green]${target_amount:,.2f}[/]"
         )
 
 

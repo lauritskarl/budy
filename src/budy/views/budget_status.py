@@ -14,13 +14,15 @@ def render_budget_status(
     BAR_WIDTH = 30
     TOTAL_WIDTH = BAR_WIDTH + 1 + 4
 
+    spent_display = total_spent / 100.0
+
     if not budget:
         stats_table = Table.grid(padding=(0, 2))
         stats_table.add_column(style="dim")
         stats_table.add_column(justify="right")
 
         stats_table.add_row("Budgeted:", "-")
-        stats_table.add_row("Spent:", f"[bold]${total_spent:,.2f}[/bold]")
+        stats_table.add_row("Spent:", f"[bold]${spent_display:,.2f}[/bold]")
         stats_table.add_row("Remaining:", "-")
 
         content = Table.grid()
@@ -41,6 +43,9 @@ def render_budget_status(
     remaining = budget.amount - total_spent
     percent_spent = (total_spent / budget.amount) * 100 if budget.amount > 0 else 0
 
+    budget_display = budget.amount / 100.0
+    remaining_display = remaining / 100.0
+
     if total_spent > budget.amount:
         color = "red"
         status_msg = "OVER BUDGET"
@@ -55,9 +60,9 @@ def render_budget_status(
     stats_table.add_column(style="cyan")
     stats_table.add_column(justify="right")
 
-    stats_table.add_row("Budgeted:", f"${budget.amount:,.2f}")
-    stats_table.add_row("Spent:", f"[bold {color}]${total_spent:,.2f}[/]")
-    stats_table.add_row("Remaining:", f"${remaining:,.2f}")
+    stats_table.add_row("Budgeted:", f"${budget_display:,.2f}")
+    stats_table.add_row("Spent:", f"[bold {color}]${spent_display:,.2f}[/]")
+    stats_table.add_row("Remaining:", f"${remaining_display:,.2f}")
 
     filled_len = min(int((total_spent / budget.amount) * BAR_WIDTH), BAR_WIDTH)
     empty_len = BAR_WIDTH - filled_len
