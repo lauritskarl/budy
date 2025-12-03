@@ -18,7 +18,7 @@ def render_budget_list(
     table.add_column("ID", justify="right", style="dim")
     table.add_column("Month", style="cyan", footer="Total Budgeted:")
     table.add_column(
-        "Amount", justify="right", style="green", footer=f"${total_budgeted}"
+        "Amount", justify="right", style="green", footer=f"${total_budgeted:,.2f}"
     )
 
     for month_idx, budget in budgets:
@@ -28,7 +28,7 @@ def render_budget_list(
             table.add_row(
                 str(budget.id),
                 month_name,
-                f"${budget.amount:,.2f}",
+                f"${budget.amount / 100.0:,.2f}",
             )
         else:
             table.add_row(

@@ -1,12 +1,13 @@
 from datetime import date, datetime
 from typing import Annotated, Optional
 
-from rich import print
+from rich.console import Console
 from typer import Option, Typer
 
 from budy.services.transaction import create_transaction
 
 app = Typer(no_args_is_help=True)
+console = Console()
 
 
 @app.command(name="add")
@@ -36,7 +37,7 @@ def add_transaction(
     final_date = entry_date.date() if entry_date else date.today()
     transaction = create_transaction(amount=amount, entry_date=final_date)
 
-    print(
+    console.print(
         f"[green]✓ Added![/] Transaction [bold]#{transaction.id}[/]: "
         f"[bold]${transaction.amount / 100:,.2f}[/bold] on {transaction.entry_date.strftime('%B %d, %Y')}"
     )

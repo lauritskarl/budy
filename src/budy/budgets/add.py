@@ -63,7 +63,7 @@ def create_budget(
     )
 
     if result["action"] == "cancelled":
-        print("[dim]Operation cancelled.[/]")
+        console.print("[dim]Operation cancelled.[/]")
         raise Exit(code=0)
 
     month_name = result["month_name"]
@@ -72,12 +72,12 @@ def create_budget(
 
     if result["action"] == "updated":
         old_amount_display = result["old_amount"] / 100.0
-        print(
+        console.print(
             f"[green]✓ Updated![/] {month_name} {year}: "
             f"[strike dim]${old_amount_display:,.2f}[/] -> [bold green]${new_amount_display:,.2f}[/]"
         )
     elif result["action"] == "created":
-        print(
+        console.print(
             f"[green]✓ Added![/] Budget for [bold]{month_name} {year}[/] set to [green]${new_amount_display:,.2f}[/]"
         )
 
