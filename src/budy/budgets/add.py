@@ -6,6 +6,7 @@ from rich import print
 from sqlmodel import Session, select
 from typer import Exit, Option, Typer, confirm
 
+from budy.constants import MAX_YEAR, MIN_YEAR
 from budy.database import engine
 from budy.models import Budget
 
@@ -41,8 +42,8 @@ def create_budget(
         Option(
             "--year",
             "-y",
-            min=1900,
-            max=2100,
+            min=MIN_YEAR,
+            max=MAX_YEAR,
             help="Set the budget target year.",
         ),
     ] = None,

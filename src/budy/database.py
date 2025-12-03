@@ -3,7 +3,7 @@ from pathlib import Path
 from sqlmodel import create_engine
 from typer import get_app_dir
 
-APP_NAME = "budy"
+from budy.constants import APP_NAME
 
 app_dir = get_app_dir(APP_NAME)
 

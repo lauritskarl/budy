@@ -8,6 +8,7 @@ from sqlmodel import Session, func, select
 from typer import Option, Typer
 
 from budy import views
+from budy.constants import MAX_YEAR, MIN_YEAR
 from budy.database import engine
 from budy.models import Budget, Transaction
 
@@ -23,8 +24,8 @@ def show_yearly_report(
         Option(
             "--year",
             "-y",
-            min=1900,
-            max=2100,
+            min=MIN_YEAR,
+            max=MAX_YEAR,
             help="The year to report on (defaults to current).",
         ),
     ] = None,
