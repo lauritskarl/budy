@@ -9,55 +9,53 @@ from budy.models import Budget, Transaction
 
 
 def seed_db():
-    """Populates the database with a budget and random transactions for the current month."""
+    """Populates the database with budgets and random transactions for the last 3 years."""
     with Session(engine) as session:
         today = date.today()
-        current_month = today.month
         current_year = today.year
+        years = range(current_year - 2, current_year + 1)
 
-        # 1. Create or Get Budget
-        existing_budget = session.exec(
-            select(Budget).where(
-                Budget.target_year == current_year, Budget.target_month == current_month
-            )
-        ).first()
+        total_transactions = 0
+        budgets_created = 0
 
-        if not existing_budget:
-            budget_amount = 2000
-            budget = Budget(
-                amount=budget_amount,
-                target_month=current_month,
-                target_year=current_year,
-            )
-            session.add(budget)
-            print(
-                f"[green]✓[/green] Created Budget: [bold]${budget_amount}[/bold] for {current_month}/{current_year}"
-            )
-        else:
-            print(
-                f"[yellow]![/yellow] Budget already exists for {current_month}/{current_year}, skipping creation."
-            )
+        print(f"Seeding data for years: [bold]{list(years)}[/bold]...\n")
 
-        # 2. Generate Random Transactions
-        # We will generate 15 random transactions
-        print("Generating random transactions...")
+        for year in years:
+            print(f"Processing [bold]{year}[/bold]...")
+            for month in range(1, 13):
+                existing_budget = session.exec(
+                    select(Budget).where(
+                        Budget.target_year == year, Budget.target_month == month
+                    )
+                ).first()
 
-        for _ in range(15):
-            # Random amount between $10 and $150
-            amount = random.randint(10, 150)
+                if not existing_budget:
+                    budget_amount = random.choice([2000, 2200, 2500, 3000])
+                    budget = Budget(
+                        amount=budget_amount,
+                        target_month=month,
+                        target_year=year,
+                    )
+                    session.add(budget)
+                    budgets_created += 1
 
-            # Random day in the current month (avoiding day 29-31 to keep it simple across all months)
-            random_day = random.randint(1, 28)
-            entry_date = date(current_year, current_month, random_day)
+                num_transactions = random.randint(10, 30)
 
-            transaction = Transaction(amount=amount, entry_date=entry_date)
-            session.add(transaction)
+                for _ in range(num_transactions):
+                    amount = random.randint(10, 150)
+
+                    random_day = random.randint(1, 28)
+                    entry_date = date(year, month, random_day)
+
+                    transaction = Transaction(amount=amount, entry_date=entry_date)
+                    session.add(transaction)
+                    total_transactions += 1
 
         session.commit()
-        print(
-            "[green]✓[/green] Successfully added [bold]15 random transactions[/bold]."
-        )
-        print("Run [bold]budy status[/bold] to see the results!")
+
+        print("\n[green]✓[/green] Seeding Complete!")
+        print(f"Created [bold]{budgets_created}[/bold] new budgets.")
+        print(f"Added [bold]{total_transactions}[/bold] random transactions.")
 
 
 if __name__ == "__main__":
