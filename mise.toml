@@ -1,0 +1,26 @@
+[tools]
+helix = "latest"
+"pipx:ruff" = "latest"
+"pipx:ty" = "latest"
+sqlite = "latest"
+uv = "latest"
+
+[tasks.lint]
+run = "ruff check"
+
+[tasks.typecheck]
+run = "ty check"
+
+[tasks.test]
+run = "pytest"
+
+[tasks.build]
+run = "uv build"
+
+[tasks.ci]
+depends = [
+  "lint",
+  "typecheck",
+  "test",
+  "build",
+]

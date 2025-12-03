@@ -1,0 +1,26 @@
+[project]
+name = "budy"
+version = "0.1.0"
+description = "An itsy bitsy CLI budgeting assistant."
+readme = "README.md"
+authors = [
+    { name = "Karl Hans Laurits", email = "karl@laurits.dev" }
+]
+requires-python = ">=3.14"
+dependencies = [
+    "sqlmodel>=0.0.27",
+    "typer>=0.20.0",
+]
+
+[project.scripts]
+budy = "budy:app"
+
+[build-system]
+requires = ["uv_build>=0.9.14,<0.10.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "hypothesis>=6.148.5",
+    "pytest>=9.0.1",
+]
