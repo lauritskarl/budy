@@ -32,7 +32,7 @@ def read_transactions(
             "-l",
             help="Limit the number of entries shown.",
         ),
-    ] = 14,
+    ] = 7,
 ) -> None:
     """Display transaction history in a table."""
     today = date.today()
