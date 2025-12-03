@@ -1,8 +1,7 @@
-import csv
-from datetime import date, datetime
 from pathlib import Path
 from typing import Optional
 
+import pandas as pd
 from sqlmodel import SQLModel
 
 from budy.models import Transaction
@@ -28,107 +27,54 @@ class ImportResult(SQLModel):
 
 
 class BaseBankImporter(SQLModel):
-    """
-    Base configuration and logic for parsing bank CSVs.
-    Subclasses should define the specific column names and formats as fields.
-    """
-
     delimiter: str = ","
     encoding: str = "utf-8"
     decimal: str = "."
-    date_fmt: Optional[str] = None
-    debit_value: str = "D"
+    dayfirst: bool = False
 
     date_col: str
     amount_col: str
     debit_credit_col: str
-
-    def _parse_amount(self, amount_str: str) -> Optional[int]:
-        """Parses an amount string to cents."""
-        try:
-            if self.decimal != ".":
-                amount_str = amount_str.replace(self.decimal, ".")
-
-            amount = float(amount_str)
-            return int(round(abs(amount) * 100))
-        except (ValueError, TypeError):
-            return None
-
-    def _parse_date(self, date_str: str) -> Optional[date]:
-        """Parses a date string into a date object."""
-        try:
-            if self.date_fmt:
-                return datetime.strptime(date_str, self.date_fmt).date()
-
-            try:
-                return datetime.strptime(date_str, "%Y-%m-%d").date()
-            except ValueError:
-                try:
-                    return datetime.strptime(date_str, "%d.%m.%Y").date()
-                except ValueError:
-                    return None
-        except (ValueError, TypeError):
-            return None
-
-    def _parse_row(self, row: dict[str, str]) -> Optional[Transaction]:
-        """Parses a single CSV row into a Transaction."""
-        required = [self.date_col, self.amount_col, self.debit_credit_col]
-        if not all(col in row for col in required):
-            return None
-
-        date_obj = self._parse_date(row[self.date_col])
-        amount_cents = self._parse_amount(row[self.amount_col])
-        debit_credit_indicator = row[self.debit_credit_col].strip().upper()
-
-        if date_obj is None or amount_cents is None:
-            return None
-
-        is_expense = debit_credit_indicator == self.debit_value.strip().upper()
-
-        if not is_expense or amount_cents <= 0:
-            return None
-
-        return Transaction(entry_date=date_obj, amount=amount_cents)
+    debit_value: str = "D"
 
     def process_file(self, file_path: Path) -> tuple[list[Transaction], ImportResult]:
-        """Reads the CSV and returns valid Transactions."""
-        transactions: list[Transaction] = []
-
         if not file_path.exists():
-            return [], ImportResult(
-                success=False, message=f"File not found: {file_path}"
-            )
+            return [], ImportResult(success=False, message="File not found")
 
         try:
-            with open(
+            # 1. READ & PARSE (Handling delimiters, decimals, and dates in one go)
+            df = pd.read_csv(
                 file_path,
-                mode="r",
+                sep=self.delimiter,
+                decimal=self.decimal,
                 encoding=self.encoding,
-                newline="",
-            ) as f:
-                reader = csv.DictReader(f, delimiter=self.delimiter)
-                header = reader.fieldnames
+                parse_dates=[self.date_col],
+                dayfirst=self.dayfirst,  # True for European dates like 31.01.2023
+            )
 
-                required_cols = {self.date_col, self.amount_col, self.debit_credit_col}
+            # 2. FILTER (Keep only Debits/Expenses)
+            # Normalize column to string/upper just in case
+            df[self.debit_credit_col] = (
+                df[self.debit_credit_col].astype(str).str.strip().str.upper()
+            )
+            df = df[df[self.debit_credit_col] == self.debit_value]
 
-                if header is None or not required_cols.issubset(header):
-                    missing = required_cols - set(header if header else [])
-                    return [], ImportResult(
-                        success=False,
-                        message="CSV missing required columns.",
-                        error=f"Missing columns: {missing}",
+            # 3. CLEAN UP
+            # Ensure amounts are positive (if they aren't already)
+            df[self.amount_col] = df[self.amount_col].abs()
+            # Drop rows with invalid dates or 0 amounts
+            df = df.dropna(subset=[self.date_col, self.amount_col])
+            df = df[df[self.amount_col] > 0]
+
+            # 4. CONVERT TO MODEL
+            transactions = []
+            for _, row in df.iterrows():
+                transactions.append(
+                    Transaction(
+                        entry_date=row[self.date_col].date(),
+                        # Convert float dollars to integer cents
+                        amount=int(round(row[self.amount_col] * 100)),
                     )
-
-                for row in reader:
-                    transaction = self._parse_row(row)
-                    if transaction:
-                        transactions.append(transaction)
-
-            if not transactions:
-                return [], ImportResult(
-                    success=True,
-                    count=0,
-                    message=f"No valid expenses found in {file_path.name}.",
                 )
 
             return transactions, ImportResult(
@@ -139,30 +85,38 @@ class BaseBankImporter(SQLModel):
 
         except Exception as e:
             return [], ImportResult(
-                success=False, message="Error reading CSV", error=str(e)
+                success=False, message="Error parsing CSV", error=str(e)
             )
 
 
 class LHVImporter(BaseBankImporter):
+    delimiter: str = ","
+    encoding: str = "utf-8"
+    decimal: str = "."
+    dayfirst: bool = False
     date_col: str = "Kuupäev"
-    date_fmt: str = "%Y-%m-%d"
-    debit_credit_col: str = "Deebet/Kreedit (D/C)"
     amount_col: str = "Summa"
+    debit_credit_col: str = "Deebet/Kreedit (D/C)"
+    debit_value: str = "D"
 
 
 class SEBImporter(BaseBankImporter):
     delimiter: str = ";"
+    encoding: str = "utf-8"
     decimal: str = ","
+    dayfirst: bool = True
     date_col: str = "Kuupäev"
-    date_fmt: str = "%d.%m.%Y"
-    debit_credit_col: str = "Deebet/Kreedit (D/C)"
     amount_col: str = "Summa"
+    debit_credit_col: str = "Deebet/Kreedit (D/C)"
+    debit_value: str = "D"
 
 
 class SwedbankImporter(BaseBankImporter):
     delimiter: str = ";"
+    encoding: str = "utf-8"
     decimal: str = ","
+    dayfirst: bool = True
     date_col: str = "Kuupäev"
-    date_fmt: str = "%d.%m.%Y"
-    debit_credit_col: str = "Deebet/Kreedit"
     amount_col: str = "Summa"
+    debit_credit_col: str = "Deebet/Kreedit"
+    debit_value: str = "D"
