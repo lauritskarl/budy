@@ -78,6 +78,8 @@ def import_transactions(bank: str, file_path: Path, dry_run: bool) -> dict:
         with Session(engine) as session:
             session.add_all(transactions)
             session.commit()
+            for t in transactions:
+                session.refresh(t)
 
     return {"transactions": transactions, "count": len(transactions)}
 
