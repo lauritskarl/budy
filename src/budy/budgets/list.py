@@ -2,7 +2,7 @@ from datetime import date
 from typing import Annotated
 
 from rich.console import Console
-from sqlmodel import Session, desc, select
+from sqlmodel import Session, asc, select
 from typer import Option, Typer
 
 from budy.database import engine
@@ -43,7 +43,7 @@ def read_budgets(
             session.exec(
                 select(Budget)
                 .where(Budget.target_year == target_year)
-                .order_by(desc(Budget.target_month))
+                .order_by(asc(Budget.target_month))
                 .offset(offset)
                 .limit(limit)
             ).all()
@@ -52,7 +52,7 @@ def read_budgets(
         budget_map = {b.target_month: b for b in budgets}
         all_months_data = []
 
-        for month in range(12, 0, -1):
+        for month in range(1, 13):
             all_months_data.append((month, budget_map.get(month)))
 
         display_data = all_months_data[offset : offset + limit]
