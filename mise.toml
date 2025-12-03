@@ -12,7 +12,7 @@ run = "ruff check"
 run = "ty check"
 
 [tasks.test]
-run = "pytest"
+run = "uv run pytest"
 
 [tasks.build]
 run = "uv build"
