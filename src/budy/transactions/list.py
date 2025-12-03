@@ -1,10 +1,10 @@
 from typing import Annotated, Optional
 
 from rich.console import Console
-from rich.table import Table
 from sqlmodel import Session, desc, select
 from typer import Option, Typer
 
+from budy import views
 from budy.database import engine
 from budy.models import Transaction
 
@@ -34,46 +34,22 @@ def read_transactions(
 ) -> None:
     """Display transaction history in a table."""
     with Session(engine) as session:
-        transactions = session.exec(
-            select(Transaction)
-            .order_by(desc(Transaction.entry_date))
-            .offset(offset)
-            .limit(limit)
-        ).all()
+        transactions = list(
+            session.exec(
+                select(Transaction)
+                .order_by(desc(Transaction.entry_date))
+                .offset(offset)
+                .limit(limit)
+            ).all()
+        )
 
         if not transactions:
-            console.print("[yellow]No transactions found.[/yellow]")
+            views.render_warning("No transactions found.")
             return
 
         page_total = sum(t.amount for t in transactions)
 
-        table = Table(title="Transaction History", show_footer=True)
-
-        table.add_column("ID", justify="right", style="dim")
-
-        table.add_column(
-            "Entry Date",
-            justify="right",
-            style="cyan",
-            footer="Page Total:",
-        )
-        table.add_column(
-            "Amount",
-            justify="right",
-            style="green",
-            footer=f"${page_total}",
-        )
-
-        for transaction in transactions:
-            date_str = transaction.entry_date.strftime("%b %d, %Y")
-
-            table.add_row(
-                str(transaction.id),
-                date_str,
-                f"${transaction.amount}",
-            )
-
-        console.print(table)
+        views.render_transaction_list(transactions, page_total)
 
 
 if __name__ == "__main__":

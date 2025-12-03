@@ -3,11 +3,10 @@ from datetime import date
 from typing import Annotated, Optional
 
 from rich.console import Console
-from rich.panel import Panel
-from rich.table import Table
 from sqlmodel import Session, func, select
 from typer import Option, Typer
 
+from budy import views
 from budy.database import engine
 from budy.models import Budget, Transaction
 
@@ -54,8 +53,8 @@ def show_monthly_report(
         ).first()
 
         if not budget:
-            console.print(
-                f"[yellow]No budget found for {month_name} {target_year}.[/yellow]\n"
+            views.render_warning(
+                f"No budget found for {month_name} {target_year}.\n"
                 f"Use [bold]budy budget add[/bold] to set one first."
             )
             return
@@ -70,46 +69,4 @@ def show_monthly_report(
         )
         total_spent = session.exec(statement).one() or 0
 
-        remaining = budget.amount - total_spent
-        percent_spent = (total_spent / budget.amount) * 100 if budget.amount > 0 else 0
-
-        if total_spent > budget.amount:
-            color = "red"
-            status_msg = "OVER BUDGET"
-        elif total_spent >= budget.amount * 0.9:
-            color = "yellow"
-            status_msg = "NEAR LIMIT"
-        else:
-            color = "green"
-            status_msg = "ON TRACK"
-
-        table = Table.grid(padding=(0, 2))
-        table.add_column(style="cyan")
-        table.add_column(justify="right")
-
-        table.add_row("Budgeted:", f"${budget.amount:,.2f}")
-        table.add_row("Spent:", f"[bold {color}]${total_spent:,.2f}[/]")
-        table.add_row("Remaining:", f"${remaining:,.2f}")
-
-        bar_width = 30
-        filled_len = min(int((total_spent / budget.amount) * bar_width), bar_width)
-        empty_len = bar_width - filled_len
-
-        bar_filled = "━" * filled_len
-        bar_empty = "━" * empty_len
-        progress_bar = f"[{color}]{bar_filled}[/][dim]{bar_empty}[/]"
-
-        content = Table.grid()
-        content.add_row(table)
-        content.add_row("")
-        content.add_row(f"{progress_bar} [bold]{int(percent_spent)}%[/]")
-
-        console.print(
-            Panel(
-                content,
-                title=f"[b]{month_name} {target_year}[/b]",
-                subtitle=f"[bold {color}]{status_msg}[/]",
-                expand=False,
-                border_style=color,
-            )
-        )
+        views.render_budget_status(budget, total_spent, month_name, target_year)
