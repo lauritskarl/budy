@@ -3,7 +3,7 @@ from typing import Annotated
 from rich.console import Console
 from typer import Option, Typer
 
-from budy.services import get_transactions
+from budy.services.transaction import get_transactions
 from budy.views import render_transaction_list, render_warning
 
 app = Typer(no_args_is_help=True)

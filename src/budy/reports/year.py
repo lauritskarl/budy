@@ -6,7 +6,7 @@ from rich.table import Table
 from typer import Option, Typer
 
 from budy.constants import MAX_YEAR, MIN_YEAR
-from budy.services import get_yearly_report_data
+from budy.services.report import get_yearly_report_data
 from budy.views import render_budget_status
 
 app = Typer(no_args_is_help=True)

@@ -4,7 +4,7 @@ from rich.console import Console
 from rich.table import Table
 from typer import Argument, Option, Typer
 
-from budy.services import search_transactions
+from budy.services.transaction import search_transactions
 from budy.views import render_warning
 
 app = Typer(no_args_is_help=True)

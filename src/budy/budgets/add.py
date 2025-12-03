@@ -5,7 +5,7 @@ from rich.console import Console
 from typer import Exit, Option, Typer, confirm
 
 from budy.constants import MAX_YEAR, MIN_YEAR
-from budy.services import add_or_update_budget
+from budy.services.budget import add_or_update_budget
 from budy.views import render_warning
 
 app = Typer(no_args_is_help=True)

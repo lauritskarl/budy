@@ -6,7 +6,10 @@ from rich.table import Table
 from typer import Option, Typer
 
 from budy.constants import MAX_YEAR, MIN_YEAR
-from budy.services import generate_budgets_suggestions, save_budget_suggestions
+from budy.services.budget import (
+    generate_budgets_suggestions,
+    save_budget_suggestions,
+)
 from budy.views import render_success, render_warning
 
 app = Typer(no_args_is_help=True)

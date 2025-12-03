@@ -4,7 +4,7 @@ from typing import Annotated, Optional
 from rich import print
 from typer import Option, Typer
 
-from budy.services import create_transaction
+from budy.services.transaction import create_transaction
 
 app = Typer(no_args_is_help=True)
 

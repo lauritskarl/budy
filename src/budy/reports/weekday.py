@@ -2,7 +2,7 @@ from rich.console import Console
 from rich.table import Table
 from typer import Typer
 
-from budy.services import get_weekday_report_data
+from budy.services.report import get_weekday_report_data
 from budy.views import render_warning
 
 app = Typer(no_args_is_help=True)

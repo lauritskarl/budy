@@ -4,7 +4,7 @@ from rich.console import Console
 from typer import Option, Typer
 
 from budy.constants import MAX_YEAR, MIN_YEAR
-from budy.services import get_top_payees
+from budy.services.report import get_top_payees
 from budy.views import render_payee_ranking, render_warning
 
 app = Typer(no_args_is_help=True)

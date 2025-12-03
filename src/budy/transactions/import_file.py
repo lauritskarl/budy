@@ -5,7 +5,7 @@ from typing import Annotated
 from rich.console import Console
 from typer import Exit, Option, Typer
 
-from budy.services import import_transactions
+from budy.services.transaction import import_transactions
 from budy.views import render_error, render_success, render_warning
 
 app = Typer(no_args_is_help=True)

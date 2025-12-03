@@ -4,7 +4,7 @@ from typing import Annotated
 from rich.console import Console
 from typer import Option, Typer
 
-from budy.services import get_budgets
+from budy.services.budget import get_budgets
 from budy.views import render_budget_list, render_warning
 
 app = Typer(no_args_is_help=True)

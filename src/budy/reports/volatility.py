@@ -6,7 +6,7 @@ from rich.table import Table
 from typer import Option, Typer
 
 from budy.constants import MAX_YEAR, MIN_YEAR
-from budy.services import get_volatility_report_data
+from budy.services.report import get_volatility_report_data
 from budy.views import render_simple_transaction_list, render_warning
 
 app = Typer(no_args_is_help=True)
