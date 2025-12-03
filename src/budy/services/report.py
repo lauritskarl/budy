@@ -65,9 +65,13 @@ def generate_monthly_report_data(target_month: int, target_year: int) -> dict:
     return report_data
 
 
-def get_top_payees(year: int | None, limit: int) -> list[tuple[str, int, int, int]]:
+def get_top_payees(
+    year: int | None,
+    limit: int,
+    by_count: bool = False,
+) -> list[tuple[str, int, int, int]]:
     """
-    Ranks payees by total spending for a given year or all time.
+    Ranks payees by total spending or transaction count for a given year or all time.
     """
     with Session(engine) as session:
         query = select(Transaction)
@@ -95,7 +99,9 @@ def get_top_payees(year: int | None, limit: int) -> list[tuple[str, int, int, in
             avg = int(total / count)
             summary.append((name, count, total, avg))
 
-        summary.sort(key=lambda x: x[2], reverse=True)
+        # Sort by Count (index 1) if requested, otherwise by Total Amount (index 2)
+        sort_index = 1 if by_count else 2
+        summary.sort(key=lambda x: x[sort_index], reverse=True)
         return summary[:limit]
 
 

@@ -31,15 +31,24 @@ def show_top_payees(
             help="Number of payees to show.",
         ),
     ] = 10,
+    by_count: Annotated[
+        bool,
+        Option(
+            "--by-count",
+            "-c",
+            help="Sort by transaction count instead of total amount.",
+        ),
+    ] = False,
 ) -> None:
     """
-    Rank payees by total spending.
+    Rank payees by total spending or frequency.
     Who is getting most of your money?
     """
-    top_payees = get_top_payees(year=year, limit=limit)
+    top_payees = get_top_payees(year=year, limit=limit, by_count=by_count)
 
     if not top_payees:
         console.print(render_warning("No transactions found."))
         return
 
-    console.print(render_payee_ranking(top_payees))
+    title = "Top Payees by Frequency" if by_count else "Top Payees by Amount"
+    console.print(render_payee_ranking(top_payees, title=title))

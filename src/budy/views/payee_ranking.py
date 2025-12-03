@@ -1,12 +1,15 @@
 from rich.table import Table
 
 
-def render_payee_ranking(payees: list[tuple[str, int, int, int]]) -> Table:
+def render_payee_ranking(
+    payees: list[tuple[str, int, int, int]],
+    title: str = "Top Payees",
+) -> Table:
     """
     Renders a ranking table of payees.
     Data format: (Receiver Name, Transaction Count, Total Amount, Average Amount)
     """
-    table = Table(title="Top Payees", show_footer=False)
+    table = Table(title=title, show_footer=False)
     table.add_column("Rank", style="dim", justify="right")
     table.add_column("Payee", style="cyan bold")
     table.add_column("Count", justify="right", style="white")

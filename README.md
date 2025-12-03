@@ -182,7 +182,7 @@ $ budy reports [OPTIONS] COMMAND [ARGS]...
 * `weekday`: Analyze spending habits by day of the week.
 * `volatility`: Analyze spending volatility and outliers.
 * `search`: Search transactions by keyword.
-* `payees`: Rank payees by total spending.
+* `payees`: Rank payees by total spending or frequency.
 
 ### `budy reports month`
 
@@ -268,7 +268,7 @@ $ budy reports search [OPTIONS] QUERY
 
 ### `budy reports payees`
 
-Rank payees by total spending.
+Rank payees by total spending or frequency.
 Who is getting most of your money?
 
 **Usage**:
@@ -281,4 +281,5 @@ $ budy reports payees [OPTIONS]
 
 * `-y, --year INTEGER RANGE`: Filter analysis by year (defaults to all time).  [1900&lt;=x&lt;=2100]
 * `-l, --limit INTEGER`: Number of payees to show.  [default: 10]
+* `-c, --by-count`: Sort by transaction count instead of total amount.
 * `--help`: Show this message and exit.
