@@ -14,7 +14,7 @@ console = Console()
 
 
 @app.command(name="search")
-@app.command(name="s", hidden=True)
+# @app.command(name="s", hidden=True)
 def search_transactions(
     query: Annotated[
         str,

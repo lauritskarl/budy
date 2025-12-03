@@ -17,7 +17,7 @@ console = Console()
 
 
 @app.command(name="month")
-@app.command(name="m", hidden=True)
+# @app.command(name="m", hidden=True)
 def show_monthly_report(
     month: Annotated[
         Optional[int],

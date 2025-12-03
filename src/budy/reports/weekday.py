@@ -16,7 +16,7 @@ console = Console()
 
 
 @app.command(name="weekday")
-@app.command(name="w", hidden=True)
+# @app.command(name="w", hidden=True)
 def show_weekday_report() -> None:
     """
     Analyze spending habits by day of the week.

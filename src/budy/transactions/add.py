@@ -12,7 +12,7 @@ app = Typer(no_args_is_help=True)
 
 
 @app.command(name="add")
-@app.command(name="a", hidden=True)
+# @app.command(name="a", hidden=True)
 def create_transaction(
     amount: Annotated[
         float,

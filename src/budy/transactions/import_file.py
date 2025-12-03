@@ -21,7 +21,7 @@ class Bank(str, Enum):
 
 
 @app.command(name="import")
-@app.command(name="i", hidden=True)
+# @app.command(name="i", hidden=True)
 def import_transactions(
     bank: Annotated[
         Bank,

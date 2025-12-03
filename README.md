@@ -17,11 +17,8 @@ $ budy [OPTIONS] COMMAND [ARGS]...
 **Commands**:
 
 * `transactions`: Manage transaction history.
-* `t`: Manage transaction history.
 * `budgets`: Set and manage monthly targets.
-* `b`: Set and manage monthly targets.
 * `reports`: View financial insights.
-* `r`: View financial insights.
 
 ## `budy transactions`
 
@@ -39,28 +36,9 @@ $ budy transactions [OPTIONS] COMMAND [ARGS]...
 
 **Commands**:
 
-* `a`: Add a new transaction to the database.
 * `add`: Add a new transaction to the database.
-* `ls`: Display transaction history in a table.
 * `list`: Display transaction history in a table.
-* `i`: Import transactions from a bank CSV file.
 * `import`: Import transactions from a bank CSV file.
-
-### `budy transactions a`
-
-Add a new transaction to the database.
-
-**Usage**:
-
-```console
-$ budy transactions a [OPTIONS]
-```
-
-**Options**:
-
-* `-a, --amount FLOAT RANGE`: Set the transaction amount (in dollars/euros).  [0.01&lt;=x&lt;=9999999; required]
-* `-d, --date [%Y-%m-%d|%Y/%m/%d]`: Set the transaction date (YYYY-MM-DD).
-* `--help`: Show this message and exit.
 
 ### `budy transactions add`
 
@@ -76,22 +54,6 @@ $ budy transactions add [OPTIONS]
 
 * `-a, --amount FLOAT RANGE`: Set the transaction amount (in dollars/euros).  [0.01&lt;=x&lt;=9999999; required]
 * `-d, --date [%Y-%m-%d|%Y/%m/%d]`: Set the transaction date (YYYY-MM-DD).
-* `--help`: Show this message and exit.
-
-### `budy transactions ls`
-
-Display transaction history in a table.
-
-**Usage**:
-
-```console
-$ budy transactions ls [OPTIONS]
-```
-
-**Options**:
-
-* `-o, --offset INTEGER`: Skip the first N entries.  [default: 0]
-* `-l, --limit INTEGER`: Limit the number of entries shown.  [default: 7]
 * `--help`: Show this message and exit.
 
 ### `budy transactions list`
@@ -110,23 +72,6 @@ $ budy transactions list [OPTIONS]
 * `-l, --limit INTEGER`: Limit the number of entries shown.  [default: 7]
 * `--help`: Show this message and exit.
 
-### `budy transactions i`
-
-Import transactions from a bank CSV file.
-
-**Usage**:
-
-```console
-$ budy transactions i [OPTIONS]
-```
-
-**Options**:
-
-* `-b, --bank TEXT`: The bank to import from. Options: lhv, seb, swedbank  [required]
-* `-f, --file FILE`: Path to the CSV file.  [required]
-* `--dry-run`: Parse the file but do not save to the database.
-* `--help`: Show this message and exit.
-
 ### `budy transactions import`
 
 Import transactions from a bank CSV file.
@@ -139,130 +84,9 @@ $ budy transactions import [OPTIONS]
 
 **Options**:
 
-* `-b, --bank TEXT`: The bank to import from. Options: lhv, seb, swedbank  [required]
+* `-b, --bank [lhv|seb|swedbank]`: The bank to import from.  [required]
 * `-f, --file FILE`: Path to the CSV file.  [required]
-* `--dry-run`: Parse the file but do not save to the database.
-* `--help`: Show this message and exit.
-
-## `budy t`
-
-Manage transaction history.
-
-**Usage**:
-
-```console
-$ budy t [OPTIONS] COMMAND [ARGS]...
-```
-
-**Options**:
-
-* `--help`: Show this message and exit.
-
-**Commands**:
-
-* `a`: Add a new transaction to the database.
-* `add`: Add a new transaction to the database.
-* `ls`: Display transaction history in a table.
-* `list`: Display transaction history in a table.
-* `i`: Import transactions from a bank CSV file.
-* `import`: Import transactions from a bank CSV file.
-
-### `budy t a`
-
-Add a new transaction to the database.
-
-**Usage**:
-
-```console
-$ budy t a [OPTIONS]
-```
-
-**Options**:
-
-* `-a, --amount FLOAT RANGE`: Set the transaction amount (in dollars/euros).  [0.01&lt;=x&lt;=9999999; required]
-* `-d, --date [%Y-%m-%d|%Y/%m/%d]`: Set the transaction date (YYYY-MM-DD).
-* `--help`: Show this message and exit.
-
-### `budy t add`
-
-Add a new transaction to the database.
-
-**Usage**:
-
-```console
-$ budy t add [OPTIONS]
-```
-
-**Options**:
-
-* `-a, --amount FLOAT RANGE`: Set the transaction amount (in dollars/euros).  [0.01&lt;=x&lt;=9999999; required]
-* `-d, --date [%Y-%m-%d|%Y/%m/%d]`: Set the transaction date (YYYY-MM-DD).
-* `--help`: Show this message and exit.
-
-### `budy t ls`
-
-Display transaction history in a table.
-
-**Usage**:
-
-```console
-$ budy t ls [OPTIONS]
-```
-
-**Options**:
-
-* `-o, --offset INTEGER`: Skip the first N entries.  [default: 0]
-* `-l, --limit INTEGER`: Limit the number of entries shown.  [default: 7]
-* `--help`: Show this message and exit.
-
-### `budy t list`
-
-Display transaction history in a table.
-
-**Usage**:
-
-```console
-$ budy t list [OPTIONS]
-```
-
-**Options**:
-
-* `-o, --offset INTEGER`: Skip the first N entries.  [default: 0]
-* `-l, --limit INTEGER`: Limit the number of entries shown.  [default: 7]
-* `--help`: Show this message and exit.
-
-### `budy t i`
-
-Import transactions from a bank CSV file.
-
-**Usage**:
-
-```console
-$ budy t i [OPTIONS]
-```
-
-**Options**:
-
-* `-b, --bank TEXT`: The bank to import from. Options: lhv, seb, swedbank  [required]
-* `-f, --file FILE`: Path to the CSV file.  [required]
-* `--dry-run`: Parse the file but do not save to the database.
-* `--help`: Show this message and exit.
-
-### `budy t import`
-
-Import transactions from a bank CSV file.
-
-**Usage**:
-
-```console
-$ budy t import [OPTIONS]
-```
-
-**Options**:
-
-* `-b, --bank TEXT`: The bank to import from. Options: lhv, seb, swedbank  [required]
-* `-f, --file FILE`: Path to the CSV file.  [required]
-* `--dry-run`: Parse the file but do not save to the database.
+* `--dry-run / --no-dry-run`: Parse the file but do not save to the database.  [default: no-dry-run]
 * `--help`: Show this message and exit.
 
 ## `budy budgets`
@@ -281,29 +105,9 @@ $ budy budgets [OPTIONS] COMMAND [ARGS]...
 
 **Commands**:
 
-* `a`: Add a new budget to the database.
 * `add`: Add a new budget to the database.
-* `ls`: Display monthly budgets in a table.
 * `list`: Display monthly budgets in a table.
-* `gen`: Auto-generate monthly budgets based on...
 * `generate`: Auto-generate monthly budgets based on...
-
-### `budy budgets a`
-
-Add a new budget to the database.
-
-**Usage**:
-
-```console
-$ budy budgets a [OPTIONS]
-```
-
-**Options**:
-
-* `-a, --amount FLOAT RANGE`: Set the budget target amount.  [1&lt;=x&lt;=9999999; required]
-* `-m, --month INTEGER RANGE`: Set the budget target month.  [1&lt;=x&lt;=12]
-* `-y, --year INTEGER RANGE`: Set the budget target year.  [1900&lt;=x&lt;=2100]
-* `--help`: Show this message and exit.
 
 ### `budy budgets add`
 
@@ -320,23 +124,6 @@ $ budy budgets add [OPTIONS]
 * `-a, --amount FLOAT RANGE`: Set the budget target amount.  [1&lt;=x&lt;=9999999; required]
 * `-m, --month INTEGER RANGE`: Set the budget target month.  [1&lt;=x&lt;=12]
 * `-y, --year INTEGER RANGE`: Set the budget target year.  [1900&lt;=x&lt;=2100]
-* `--help`: Show this message and exit.
-
-### `budy budgets ls`
-
-Display monthly budgets in a table.
-
-**Usage**:
-
-```console
-$ budy budgets ls [OPTIONS]
-```
-
-**Options**:
-
-* `-y, --year INTEGER`: Filter by year.  [default: 2025]
-* `-o, --offset INTEGER`: Skip the first N entries.  [default: 0]
-* `-l, --limit INTEGER`: Limit the number of entries shown.  [default: 12]
 * `--help`: Show this message and exit.
 
 ### `budy budgets list`
@@ -356,24 +143,6 @@ $ budy budgets list [OPTIONS]
 * `-l, --limit INTEGER`: Limit the number of entries shown.  [default: 12]
 * `--help`: Show this message and exit.
 
-### `budy budgets gen`
-
-Auto-generate monthly budgets based on historical transaction data.
-Calculates suggestions using recent spending trends and seasonal history.
-
-**Usage**:
-
-```console
-$ budy budgets gen [OPTIONS]
-```
-
-**Options**:
-
-* `-y, --year INTEGER RANGE`: The year to generate budgets for.  [1900&lt;=x&lt;=2100]
-* `-f, --force`: Overwrite existing budgets without asking.
-* `--yes`: Automatically confirm saving suggestions.
-* `--help`: Show this message and exit.
-
 ### `budy budgets generate`
 
 Auto-generate monthly budgets based on historical transaction data.
@@ -383,133 +152,6 @@ Calculates suggestions using recent spending trends and seasonal history.
 
 ```console
 $ budy budgets generate [OPTIONS]
-```
-
-**Options**:
-
-* `-y, --year INTEGER RANGE`: The year to generate budgets for.  [1900&lt;=x&lt;=2100]
-* `-f, --force`: Overwrite existing budgets without asking.
-* `--yes`: Automatically confirm saving suggestions.
-* `--help`: Show this message and exit.
-
-## `budy b`
-
-Set and manage monthly targets.
-
-**Usage**:
-
-```console
-$ budy b [OPTIONS] COMMAND [ARGS]...
-```
-
-**Options**:
-
-* `--help`: Show this message and exit.
-
-**Commands**:
-
-* `a`: Add a new budget to the database.
-* `add`: Add a new budget to the database.
-* `ls`: Display monthly budgets in a table.
-* `list`: Display monthly budgets in a table.
-* `gen`: Auto-generate monthly budgets based on...
-* `generate`: Auto-generate monthly budgets based on...
-
-### `budy b a`
-
-Add a new budget to the database.
-
-**Usage**:
-
-```console
-$ budy b a [OPTIONS]
-```
-
-**Options**:
-
-* `-a, --amount FLOAT RANGE`: Set the budget target amount.  [1&lt;=x&lt;=9999999; required]
-* `-m, --month INTEGER RANGE`: Set the budget target month.  [1&lt;=x&lt;=12]
-* `-y, --year INTEGER RANGE`: Set the budget target year.  [1900&lt;=x&lt;=2100]
-* `--help`: Show this message and exit.
-
-### `budy b add`
-
-Add a new budget to the database.
-
-**Usage**:
-
-```console
-$ budy b add [OPTIONS]
-```
-
-**Options**:
-
-* `-a, --amount FLOAT RANGE`: Set the budget target amount.  [1&lt;=x&lt;=9999999; required]
-* `-m, --month INTEGER RANGE`: Set the budget target month.  [1&lt;=x&lt;=12]
-* `-y, --year INTEGER RANGE`: Set the budget target year.  [1900&lt;=x&lt;=2100]
-* `--help`: Show this message and exit.
-
-### `budy b ls`
-
-Display monthly budgets in a table.
-
-**Usage**:
-
-```console
-$ budy b ls [OPTIONS]
-```
-
-**Options**:
-
-* `-y, --year INTEGER`: Filter by year.  [default: 2025]
-* `-o, --offset INTEGER`: Skip the first N entries.  [default: 0]
-* `-l, --limit INTEGER`: Limit the number of entries shown.  [default: 12]
-* `--help`: Show this message and exit.
-
-### `budy b list`
-
-Display monthly budgets in a table.
-
-**Usage**:
-
-```console
-$ budy b list [OPTIONS]
-```
-
-**Options**:
-
-* `-y, --year INTEGER`: Filter by year.  [default: 2025]
-* `-o, --offset INTEGER`: Skip the first N entries.  [default: 0]
-* `-l, --limit INTEGER`: Limit the number of entries shown.  [default: 12]
-* `--help`: Show this message and exit.
-
-### `budy b gen`
-
-Auto-generate monthly budgets based on historical transaction data.
-Calculates suggestions using recent spending trends and seasonal history.
-
-**Usage**:
-
-```console
-$ budy b gen [OPTIONS]
-```
-
-**Options**:
-
-* `-y, --year INTEGER RANGE`: The year to generate budgets for.  [1900&lt;=x&lt;=2100]
-* `-f, --force`: Overwrite existing budgets without asking.
-* `--yes`: Automatically confirm saving suggestions.
-* `--help`: Show this message and exit.
-
-### `budy b generate`
-
-Auto-generate monthly budgets based on historical transaction data.
-Calculates suggestions using recent spending trends and seasonal history.
-
-**Usage**:
-
-```console
-$ budy b generate [OPTIONS]
 ```
 
 **Options**:
@@ -535,26 +177,12 @@ $ budy reports [OPTIONS] COMMAND [ARGS]...
 
 **Commands**:
 
-* `m`: Show the budget status report for a...
 * `month`: Show the budget status report for a...
-* `y`: Show the budget status report for a...
 * `year`: Show the budget status report for a...
-
-### `budy reports m`
-
-Show the budget status report for a specific month.
-
-**Usage**:
-
-```console
-$ budy reports m [OPTIONS]
-```
-
-**Options**:
-
-* `-m, --month INTEGER RANGE`: The month to report on (defaults to current).  [1&lt;=x&lt;=12]
-* `-y, --year INTEGER RANGE`: The year to report on (defaults to current).  [1900&lt;=x&lt;=2100]
-* `--help`: Show this message and exit.
+* `weekday`: Analyze spending habits by day of the week.
+* `volatility`: Analyze spending volatility and outliers.
+* `search`: Search transactions by keyword.
+* `payees`: Rank payees by total spending.
 
 ### `budy reports month`
 
@@ -569,21 +197,6 @@ $ budy reports month [OPTIONS]
 **Options**:
 
 * `-m, --month INTEGER RANGE`: The month to report on (defaults to current).  [1&lt;=x&lt;=12]
-* `-y, --year INTEGER RANGE`: The year to report on (defaults to current).  [1900&lt;=x&lt;=2100]
-* `--help`: Show this message and exit.
-
-### `budy reports y`
-
-Show the budget status report for a specific year.
-
-**Usage**:
-
-```console
-$ budy reports y [OPTIONS]
-```
-
-**Options**:
-
 * `-y, --year INTEGER RANGE`: The year to report on (defaults to current).  [1900&lt;=x&lt;=2100]
 * `--help`: Show this message and exit.
 
@@ -602,85 +215,70 @@ $ budy reports year [OPTIONS]
 * `-y, --year INTEGER RANGE`: The year to report on (defaults to current).  [1900&lt;=x&lt;=2100]
 * `--help`: Show this message and exit.
 
-## `budy r`
+### `budy reports weekday`
 
-View financial insights.
+Analyze spending habits by day of the week.
+Shows which days you statistically spend the most money on.
 
 **Usage**:
 
 ```console
-$ budy r [OPTIONS] COMMAND [ARGS]...
+$ budy reports weekday [OPTIONS]
 ```
 
 **Options**:
 
 * `--help`: Show this message and exit.
 
-**Commands**:
+### `budy reports volatility`
 
-* `m`: Show the budget status report for a...
-* `month`: Show the budget status report for a...
-* `y`: Show the budget status report for a...
-* `year`: Show the budget status report for a...
-
-### `budy r m`
-
-Show the budget status report for a specific month.
+Analyze spending volatility and outliers.
+Shows standard deviation and the largest transactions.
 
 **Usage**:
 
 ```console
-$ budy r m [OPTIONS]
+$ budy reports volatility [OPTIONS]
 ```
 
 **Options**:
 
-* `-m, --month INTEGER RANGE`: The month to report on (defaults to current).  [1&lt;=x&lt;=12]
-* `-y, --year INTEGER RANGE`: The year to report on (defaults to current).  [1900&lt;=x&lt;=2100]
+* `-y, --year INTEGER RANGE`: Filter analysis by year (defaults to all time).  [1900&lt;=x&lt;=2100]
 * `--help`: Show this message and exit.
 
-### `budy r month`
+### `budy reports search`
 
-Show the budget status report for a specific month.
+Search transactions by keyword.
+Looks inside the Receiver name and Description.
 
 **Usage**:
 
 ```console
-$ budy r month [OPTIONS]
+$ budy reports search [OPTIONS] QUERY
 ```
+
+**Arguments**:
+
+* `QUERY`: Keyword to search for (in receiver or description).  [required]
 
 **Options**:
 
-* `-m, --month INTEGER RANGE`: The month to report on (defaults to current).  [1&lt;=x&lt;=12]
-* `-y, --year INTEGER RANGE`: The year to report on (defaults to current).  [1900&lt;=x&lt;=2100]
+* `-l, --limit INTEGER RANGE`: Maximum number of results to display.  [default: 20; x&gt;=1]
 * `--help`: Show this message and exit.
 
-### `budy r y`
+### `budy reports payees`
 
-Show the budget status report for a specific year.
-
-**Usage**:
-
-```console
-$ budy r y [OPTIONS]
-```
-
-**Options**:
-
-* `-y, --year INTEGER RANGE`: The year to report on (defaults to current).  [1900&lt;=x&lt;=2100]
-* `--help`: Show this message and exit.
-
-### `budy r year`
-
-Show the budget status report for a specific year.
+Rank payees by total spending.
+Who is getting most of your money?
 
 **Usage**:
 
 ```console
-$ budy r year [OPTIONS]
+$ budy reports payees [OPTIONS]
 ```
 
 **Options**:
 
-* `-y, --year INTEGER RANGE`: The year to report on (defaults to current).  [1900&lt;=x&lt;=2100]
+* `-y, --year INTEGER RANGE`: Filter analysis by year (defaults to all time).  [1900&lt;=x&lt;=2100]
+* `-l, --limit INTEGER`: Number of payees to show.  [default: 10]
 * `--help`: Show this message and exit.

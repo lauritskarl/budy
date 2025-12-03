@@ -16,7 +16,7 @@ console = Console()
 
 
 @app.command(name="add")
-@app.command(name="a", hidden=True)
+# @app.command(name="a", hidden=True)
 def create_budget(
     target_amount: Annotated[
         float,

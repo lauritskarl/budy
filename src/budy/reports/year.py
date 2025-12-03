@@ -17,7 +17,7 @@ console = Console()
 
 
 @app.command(name="year")
-@app.command(name="y", hidden=True)
+# @app.command(name="y", hidden=True)
 def show_yearly_report(
     year: Annotated[
         Optional[int],

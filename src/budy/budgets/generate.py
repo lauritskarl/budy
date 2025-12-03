@@ -18,7 +18,7 @@ console = Console()
 
 
 @app.command(name="generate")
-@app.command(name="gen", hidden=True)
+# @app.command(name="gen", hidden=True)
 def generate_budgets(
     year: Annotated[
         Optional[int],

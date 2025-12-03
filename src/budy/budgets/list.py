@@ -14,7 +14,7 @@ console = Console()
 
 
 @app.command(name="list")
-@app.command(name="ls", hidden=True)
+# @app.command(name="ls", hidden=True)
 def read_budgets(
     target_year: Annotated[
         int,

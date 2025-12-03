@@ -16,7 +16,7 @@ console = Console()
 
 
 @app.command(name="payees")
-@app.command(name="p", hidden=True)
+# @app.command(name="p", hidden=True)
 def show_top_payees(
     year: Annotated[
         Optional[int],

@@ -17,7 +17,7 @@ console = Console()
 
 
 @app.command(name="volatility")
-@app.command(name="v", hidden=True)
+# @app.command(name="v", hidden=True)
 def show_volatility_report(
     year: Annotated[
         Optional[int],
