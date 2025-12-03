@@ -13,7 +13,8 @@ app = Typer(no_args_is_help=True)
 
 
 @app.command(name="add")
-def add_budget(
+@app.command(name="a", hidden=True)
+def create_budget(
     target_amount: Annotated[
         int,
         Option(

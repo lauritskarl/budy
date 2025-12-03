@@ -13,7 +13,8 @@ console = Console()
 
 
 @app.command(name="list")
-def list_transactions(
+@app.command(name="ls", hidden=True)
+def read_transactions(
     offset: Annotated[
         Optional[int],
         Option(

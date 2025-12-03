@@ -11,15 +11,13 @@ from typer import Option, Typer
 from budy.database import engine
 from budy.models import Budget, Transaction
 
-app = Typer(
-    help="An itsy bitsy CLI budgeting assistant.",
-    no_args_is_help=True,
-)
+app = Typer(no_args_is_help=True)
 console = Console()
 
 
-@app.command(name="status")
-def report_status(
+@app.command(name="month")
+@app.command(name="m", hidden=True)
+def show_monthly_report(
     month: Annotated[
         Optional[int],
         Option(

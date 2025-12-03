@@ -15,7 +15,8 @@ console = Console()
 
 
 @app.command(name="list")
-def list_budgets(
+@app.command(name="ls", hidden=True)
+def read_budgets(
     target_year: Annotated[
         int,
         Option("--year", "-y", help="Filter by year."),
