@@ -17,10 +17,14 @@ run = "uv run pytest"
 [tasks.build]
 run = "uv build"
 
+[tasks.generate-docs]
+run = "uv run typer budy utils docs --output README.md --name budy"
+
 [tasks.ci]
 depends = [
   "lint",
   "typecheck",
   "test",
   "build",
+  "generate-docs",
 ]
