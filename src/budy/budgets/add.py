@@ -7,38 +7,11 @@ from typer import Exit, Option, Typer, confirm
 
 from budy.constants import MAX_YEAR, MIN_YEAR
 from budy.database import engine
-from budy.services.budget import add_or_update_budget
+from budy.services.budget import get_budget, upsert_budget
 from budy.views import render_warning
 
 app = Typer(no_args_is_help=True)
 console = Console()
-
-
-def confirm_overwrite(message: str) -> bool:
-    """Generic confirmation callback."""
-    console.print(render_warning(message))
-    return confirm("Overwrite?")
-
-
-def display_result(result: dict) -> None:
-    """Handles the visual output logic."""
-    if result["action"] == "cancelled":
-        console.print("[dim]Operation cancelled.[/]")
-        raise Exit(code=0)
-
-    new_amt = result["new_amount"] / 100.0
-    target = f"{result['month_name']} {result['year']}"
-
-    if result["action"] == "updated":
-        old_amt = result["old_amount"] / 100.0
-        console.print(
-            f"[green]✓ Updated![/] {target}: "
-            f"[strike dim]${old_amt:,.2f}[/] -> [bold green]${new_amt:,.2f}[/]"
-        )
-    else:
-        console.print(
-            f"[green]✓ Added![/] Budget for [bold]{target}[/] set to [green]${new_amt:,.2f}[/]"
-        )
 
 
 @app.command(name="add")
@@ -77,17 +50,33 @@ def create_budget(
 ) -> None:
     """Add a new budget to the database."""
     today = date.today()
+    target_month = month or today.month
+    target_year = year or today.year
 
     with Session(engine) as session:
-        budget = add_or_update_budget(
+        existing = get_budget(session, target_month, target_year)
+
+        if existing:
+            console.print(
+                render_warning(
+                    f"Budget for {target_month}/{target_year} already exists."
+                )
+            )
+            if not confirm("Overwrite?"):
+                console.print("[dim]Operation cancelled.[/]")
+                raise Exit(code=0)
+
+        budget = upsert_budget(
             session=session,
-            target_amount=amount,
-            target_month=month or today.month,
-            target_year=year or today.year,
-            confirmation_callback=confirm_overwrite,
+            amount=amount,
+            target_month=target_month,
+            target_year=target_year,
         )
 
-    display_result(budget)
+    console.print(
+        f"[green]✓ Saved![/] Budget for [bold]{target_month}/{target_year}[/] "
+        f"set to [green]${budget.amount / 100:,.2f}[/]"
+    )
 
 
 if __name__ == "__main__":

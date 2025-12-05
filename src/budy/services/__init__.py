@@ -1,9 +1,10 @@
 from .budget import (
-    add_or_update_budget,
     generate_budgets_suggestions,
+    get_budget,
     get_budgets,
     save_budget_suggestions,
     suggest_budget_amount,
+    upsert_budget,
 )
 from .report import (
     generate_monthly_report_data,
@@ -20,6 +21,8 @@ from .transaction import (
 )
 
 __all__ = [
+    "get_budget",
+    "upsert_budget",
     "get_budgets",
     "add_or_update_budget",
     "generate_budgets_suggestions",

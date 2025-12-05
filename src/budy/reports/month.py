@@ -18,23 +18,11 @@ console = Console()
 def show_monthly_report(
     month: Annotated[
         Optional[int],
-        Option(
-            "--month",
-            "-m",
-            min=1,
-            max=12,
-            help="Target month.",
-        ),
+        Option("--month", "-m", min=1, max=12, help="Target month."),
     ] = None,
     year: Annotated[
         Optional[int],
-        Option(
-            "--year",
-            "-y",
-            min=MIN_YEAR,
-            max=MAX_YEAR,
-            help="Target year.",
-        ),
+        Option("--year", "-y", min=MIN_YEAR, max=MAX_YEAR, help="Target year."),
     ] = None,
 ) -> None:
     """Show the budget status report for a specific month."""
@@ -45,22 +33,35 @@ def show_monthly_report(
     with Session(engine) as session:
         data = generate_monthly_report_data(session, target_month, target_year)
 
-    if not data["budget"]:
+    if not data.budget:
         console.print(
             render_warning(
-                f"No budget found for {data['month_name']} {data['target_year']}.\n"
+                f"No budget found for {data.month_name} {data.target_year}.\n"
                 f"Use [bold]budy budgets add[/bold] to set one first."
             )
         )
         return
 
+    # Views now accept DTOs or DTO fields.
+    # Since render_budget_status is shared with Year report, we pass explicit fields.
+    # Note: If we updated render_budget_status to take MonthlyReportData, we'd update it here.
+    # For now, we pass the data from the DTO.
+
+    forecast_dict = None
+    if data.forecast:
+        forecast_dict = {
+            "avg_per_day": data.forecast.avg_per_day,
+            "projected_total": data.forecast.projected_total,
+            "projected_overage": data.forecast.projected_overage,
+        }
+
     console.print(
         render_budget_status(
-            budget=data["budget"],
-            total_spent=data["total_spent"],
-            month_name=data["month_name"],
-            target_year=data["target_year"],
-            forecast_data=data["forecast"],
+            budget=data.budget,
+            total_spent=data.total_spent,
+            month_name=data.month_name,
+            target_year=data.target_year,
+            forecast_data=forecast_dict,
         )
     )
 

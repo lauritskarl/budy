@@ -5,10 +5,12 @@ from pathlib import Path
 from sqlmodel import Session, asc, col, desc, or_, select
 
 import budy.importers as importers
+from budy.constants import Bank
 from budy.models import Transaction
 
 
 def get_transactions(
+    *,
     session: Session,
     offset: int,
     limit: int,
@@ -41,6 +43,7 @@ def get_transactions(
 
 
 def create_transaction(
+    *,
     session: Session,
     amount: float,
     entry_date: date | None = None,
@@ -50,10 +53,13 @@ def create_transaction(
     amount_cents = int(round(amount * 100))
     transaction = Transaction(amount=amount_cents, entry_date=final_date)
     session.add(transaction)
+    session.commit()
+    session.refresh(transaction)
     return transaction
 
 
 def import_transactions(
+    *,
     session: Session,
     bank: Bank,
     file_path: Path,
@@ -75,11 +81,14 @@ def import_transactions(
 
     if not dry_run and transactions:
         session.add_all(transactions)
+        session.commit()
 
     return transactions
 
 
-def search_transactions(session: Session, query: str, limit: int) -> list[Transaction]:
+def search_transactions(
+    *, session: Session, query: str, limit: int
+) -> list[Transaction]:
     """Search for transactions by receiver or description keyword."""
     pattern = f"%{query}%"
     stmt = (

@@ -8,29 +8,10 @@ from typer import Exit, Option, Typer
 from budy.constants import Bank
 from budy.database import engine
 from budy.services.transaction import import_transactions
-from budy.views import render_error, render_success, render_warning
+from budy.views import render_error, render_import_summary
 
 app = Typer(no_args_is_help=True)
 console = Console()
-
-
-def display_summary(transactions: list, filename: str, dry_run: bool) -> None:
-    """Handles the post-import reporting logic."""
-    if not transactions:
-        console.print(render_warning(f"No valid expenses found in {filename}."))
-        return
-
-    count = len(transactions)
-    total_display = sum(t.amount for t in transactions) / 100.0
-
-    console.print(
-        f"\nFound [bold]{count}[/] transactions totaling [green]${total_display:,.2f}[/]."
-    )
-
-    if dry_run:
-        console.print("[yellow]Dry run active. No changes made to database.[/]")
-    else:
-        console.print(render_success(f"Successfully imported {count} transactions!"))
 
 
 @app.command(name="import")
@@ -86,7 +67,7 @@ def run_import(
         console.print(render_error(f"Unexpected error: {e}"))
         raise Exit(1)
 
-    display_summary(transactions, file_path.name, dry_run)
+    console.print(render_import_summary(transactions, file_path.name, dry_run))
 
 
 if __name__ == "__main__":

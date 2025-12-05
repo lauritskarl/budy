@@ -1,13 +1,12 @@
 from typing import Annotated
 
 from rich.console import Console
-from rich.table import Table
 from sqlmodel import Session
 from typer import Argument, Option, Typer
 
 from budy.database import engine
 from budy.services.transaction import search_transactions
-from budy.views import render_warning
+from budy.views import render_search_results, render_warning
 
 app = Typer(no_args_is_help=True)
 console = Console()
@@ -37,34 +36,4 @@ def run_search(
         console.print(render_warning(f"No transactions found matching '{query}'."))
         return
 
-    display_results = results[::-1]
-    total_cents = sum(t.amount for t in display_results)
-
-    title = f"Search Results: '{query}'"
-    if len(results) == limit:
-        title += f" (Showing latest {limit})"
-
-    table = Table(title=title, show_footer=True)
-    table.add_column("Date", style="cyan")
-    table.add_column("Receiver", style="white")
-    table.add_column("Description", style="dim", footer="Total:")
-    table.add_column(
-        "Amount",
-        justify="right",
-        style="red bold",
-        footer=f"${total_cents / 100:,.2f}",
-    )
-
-    for t in display_results:
-        desc = t.description or ""
-        if len(desc) > 30:
-            desc = f"{desc[:27]}..."
-
-        table.add_row(
-            t.entry_date.strftime("%b %d, %Y"),
-            t.receiver or "[dim]-[/]",
-            desc,
-            f"${t.amount / 100:,.2f}",
-        )
-
-    console.print(table)
+    console.print(render_search_results(results, query, limit))

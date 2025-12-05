@@ -1,8 +1,10 @@
 from datetime import date
 
+from rich.console import Group
 from rich.table import Table
 
 from budy.models import Transaction
+from budy.views.messages import render_success, render_warning
 
 
 def render_transaction_list(
@@ -17,7 +19,6 @@ def render_transaction_list(
     table.add_column("ID", justify="right", style="dim")
     table.add_column("Date", justify="right", style="cyan", footer="Page Total:")
 
-    # New column for Receiver and Description
     table.add_column("Receiver / Description", style="white")
 
     table.add_column(
@@ -35,12 +36,10 @@ def render_transaction_list(
             continue
 
         for t in transactions:
-            # Format the details: Receiver bold, description dim below it
             details_parts = []
             if t.receiver:
                 details_parts.append(f"[bold]{t.receiver}[/]")
             if t.description:
-                # Truncate description if too long to keep table readable
                 desc = t.description
                 if len(desc) > 60:
                     desc = desc[:57] + "..."
@@ -67,7 +66,6 @@ def render_simple_transaction_list(
         receiver = t.receiver if t.receiver else "[dim]-[/]"
         desc = t.description if t.description else ""
 
-        # Truncate description strictly for this compact list
         if len(desc) > 30:
             desc = desc[:27] + "..."
 
@@ -79,3 +77,23 @@ def render_simple_transaction_list(
         )
 
     return table
+
+
+def render_import_summary(
+    transactions: list[Transaction], filename: str, dry_run: bool
+) -> Group | str:
+    """Renders the post-import summary message."""
+    if not transactions:
+        return render_warning(f"No valid expenses found in {filename}.")
+
+    count = len(transactions)
+    total_display = sum(t.amount for t in transactions) / 100.0
+
+    summary_text = f"\nFound [bold]{count}[/] transactions totaling [green]${total_display:,.2f}[/]."
+
+    if dry_run:
+        status_text = "[yellow]Dry run active. No changes made to database.[/]"
+    else:
+        status_text = render_success(f"Successfully imported {count} transactions!")
+
+    return Group(summary_text, status_text)
