@@ -4,7 +4,7 @@ from typing import Optional
 from rich.panel import Panel
 from rich.table import Table
 
-from budy.dtos import BudgetSuggestion
+from budy.dtos import BudgetSuggestion, MonthlyReportData
 from budy.models import Budget
 
 
@@ -61,17 +61,15 @@ def render_budget_preview(*, suggestions: list[BudgetSuggestion], year: int) -> 
     return table
 
 
-def render_budget_status(
-    *,
-    budget: Budget | None,
-    total_spent: int,
-    month_name: str,
-    target_year: int,
-    forecast_data: dict | None = None,
-) -> Panel:
+def render_budget_status(*, data: MonthlyReportData) -> Panel:
     """Renders the monthly budget status panel with a progress bar and optional forecast."""
     BAR_WIDTH = 30
     TOTAL_WIDTH = BAR_WIDTH + 1 + 4
+
+    budget = data.budget
+    total_spent = data.total_spent
+    month_name = data.month_name
+    target_year = data.target_year
 
     spent_display = total_spent / 100.0
 
@@ -134,14 +132,14 @@ def render_budget_status(
     content.add_row("")
     content.add_row(f"{progress_bar} [bold]{int(percent_spent):>3}%[/]")
 
-    if forecast_data:
+    if data.forecast:
         grid = Table.grid(padding=(0, 2))
         grid.add_column(style="dim italic")
         grid.add_column(justify="right")
 
-        avg_per_day = forecast_data["avg_per_day"]
-        projected_total = forecast_data["projected_total"]
-        projected_overage = forecast_data["projected_overage"]
+        avg_per_day = data.forecast.avg_per_day
+        projected_total = data.forecast.projected_total
+        projected_overage = data.forecast.projected_overage
 
         grid.add_row("Daily Average:", f"${avg_per_day / 100:,.2f}")
         grid.add_row("Projected Total:", f"[bold]${projected_total / 100:,.2f}[/]")

@@ -44,28 +44,7 @@ def show_monthly_report(
         )
         return
 
-    # Views now accept DTOs or DTO fields.
-    # Since render_budget_status is shared with Year report, we pass explicit fields.
-    # Note: If we updated render_budget_status to take MonthlyReportData, we'd update it here.
-    # For now, we pass the data from the DTO.
-
-    forecast_dict = None
-    if data.forecast:
-        forecast_dict = {
-            "avg_per_day": data.forecast.avg_per_day,
-            "projected_total": data.forecast.projected_total,
-            "projected_overage": data.forecast.projected_overage,
-        }
-
-    console.print(
-        render_budget_status(
-            budget=data.budget,
-            total_spent=data.total_spent,
-            month_name=data.month_name,
-            target_year=data.target_year,
-            forecast_data=forecast_dict,
-        )
-    )
+    console.print(render_budget_status(data=data))
 
 
 if __name__ == "__main__":

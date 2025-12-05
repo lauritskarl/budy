@@ -22,15 +22,7 @@ def render_yearly_report(
     grid.add_column()
     grid.add_column()
 
-    panels = [
-        render_budget_status(
-            budget=r.budget,
-            total_spent=r.total_spent,
-            month_name=r.month_name,
-            target_year=r.target_year,
-        )
-        for r in monthly_reports
-    ]
+    panels = [render_budget_status(data=report) for report in monthly_reports]
 
     for i in range(0, len(panels), 3):
         row = panels[i : i + 3]
