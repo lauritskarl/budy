@@ -6,144 +6,142 @@ from statistics import mean, median
 
 from sqlmodel import Session, asc, select
 
-from budy.database import engine
 from budy.models import Budget, Transaction
 
 
 def get_budgets(
-    target_year: int, offset: int, limit: int
+    session: Session,
+    target_year: int,
+    offset: int,
+    limit: int,
 ) -> list[tuple[int, Budget | None]]:
-    """
-    Fetches budgets for a given year, with optional pagination.
-    """
-    with Session(engine) as session:
-        budgets = list(
-            session.exec(
-                select(Budget)
-                .where(Budget.target_year == target_year)
-                .order_by(asc(Budget.target_month))
-                .offset(offset)
-                .limit(limit)
-            ).all()
-        )
+    """Fetches budgets for a given year, with pagination."""
+    budgets = list(
+        session.exec(
+            select(Budget)
+            .where(Budget.target_year == target_year)
+            .order_by(asc(Budget.target_month))
+            .offset(offset)
+            .limit(limit)
+        ).all()
+    )
 
-        budget_map = {b.target_month: b for b in budgets}
-        all_months_data = []
+    budget_map = {b.target_month: b for b in budgets}
 
-        for month in range(1, 13):
-            all_months_data.append((month, budget_map.get(month)))
+    all_months_data = [(month, budget_map.get(month)) for month in range(1, 13)]
 
-        return all_months_data[offset : offset + limit]
+    return all_months_data[offset : offset + limit]
 
 
 def add_or_update_budget(
+    session: Session,
     target_amount: float,
     target_month: int,
     target_year: int,
     confirmation_callback: Callable[[str], bool],
 ) -> dict:
-    """
-    Adds a new budget or updates an existing one after confirmation.
-    Returns a dict with the result of the operation.
-    """
-    with Session(engine) as session:
-        month_name = calendar.month_name[target_month]
-        target_cents = int(round(target_amount * 100))
+    """Add a new budget or update an existing one after confirmation."""
+    month_name = calendar.month_name[target_month]
+    target_cents = int(round(target_amount * 100))
 
-        existing_budget = session.exec(
-            select(Budget).where(
-                Budget.target_year == target_year,
-                Budget.target_month == target_month,
-            )
-        ).first()
-
-        if existing_budget:
-            old_amount = existing_budget.amount
-            if not confirmation_callback(
-                f"A budget for {month_name} {target_year} already exists. Overwrite?"
-            ):
-                return {"action": "cancelled"}
-
-            existing_budget.amount = target_cents
-            session.add(existing_budget)
-            session.commit()
-            return {
-                "action": "updated",
-                "old_amount": old_amount,
-                "new_amount": target_cents,
-                "month_name": month_name,
-                "year": target_year,
-            }
-
-        new_budget = Budget(
-            amount=target_cents,
-            target_month=target_month,
-            target_year=target_year,
+    existing_budget = session.exec(
+        select(Budget).where(
+            Budget.target_year == target_year,
+            Budget.target_month == target_month,
         )
-        session.add(new_budget)
+    ).first()
+
+    if existing_budget:
+        old_amount = existing_budget.amount
+        if not confirmation_callback(
+            f"A budget for {month_name} {target_year} already exists. Overwrite?"
+        ):
+            return {"action": "cancelled"}
+
+        existing_budget.amount = target_cents
+        session.add(existing_budget)
         session.commit()
         return {
-            "action": "created",
+            "action": "updated",
+            "old_amount": old_amount,
             "new_amount": target_cents,
             "month_name": month_name,
             "year": target_year,
         }
 
+    new_budget = Budget(
+        amount=target_cents,
+        target_month=target_month,
+        target_year=target_year,
+    )
+    session.add(new_budget)
+    session.commit()
+    return {
+        "action": "created",
+        "new_amount": target_cents,
+        "month_name": month_name,
+        "year": target_year,
+    }
 
-def generate_budgets_suggestions(target_year: int, force: bool) -> list[dict]:
+
+def generate_budgets_suggestions(
+    session: Session,
+    target_year: int,
+    force: bool,
+) -> list[dict]:
     """
     Generates budget suggestions for a given year based on historical data.
     """
-    suggestions = []
-    with Session(engine) as session:
-        existing_budgets = session.exec(
-            select(Budget).where(Budget.target_year == target_year)
-        ).all()
-        existing_map = {b.target_month: b for b in existing_budgets}
+    existing_budgets = session.exec(
+        select(Budget).where(Budget.target_year == target_year)
+    ).all()
 
-        for month in range(1, 13):
-            month_name = calendar.month_name[month]
+    existing_map = {b.target_month: b for b in existing_budgets}
 
-            if month in existing_map and not force:
-                continue
-
-            suggested_amount = suggest_budget_amount(session, month, target_year)
-
-            if suggested_amount > 0:
-                suggestions.append(
-                    {
-                        "month": month,
-                        "month_name": month_name,
-                        "amount": suggested_amount,
-                        "existing": existing_map.get(month),
-                    }
-                )
-    return suggestions
+    return [
+        {
+            "month": month,
+            "month_name": calendar.month_name[month],
+            "amount": suggested_amount,
+            "existing": existing_map.get(month),
+        }
+        for month in range(1, 13)
+        if force or month not in existing_map
+        if (suggested_amount := suggest_budget_amount(session, month, target_year)) > 0
+    ]
 
 
-def save_budget_suggestions(suggestions: list[dict]) -> int:
-    """
-    Saves a list of budget suggestions to the database.
-    """
-    with Session(engine) as session:
-        count = 0
-        for item in suggestions:
-            if item["existing"]:
-                item["existing"].amount = item["amount"]
-                session.add(item["existing"])
-            else:
-                new_budget = Budget(
+def save_budget_suggestions(
+    session: Session,
+    suggestions: list[dict],
+) -> int:
+    """Saves a list of budget suggestions to the database."""
+    new_budgets = []
+
+    for item in suggestions:
+        if budget := item.get("existing"):
+            budget.amount = item["amount"]
+        else:
+            new_budgets.append(
+                Budget(
                     target_year=item["year"],
                     target_month=item["month"],
                     amount=item["amount"],
                 )
-                session.add(new_budget)
-            count += 1
-        session.commit()
-    return count
+            )
+
+    if new_budgets:
+        session.add_all(new_budgets)
+
+    session.commit()
+    return len(suggestions)
 
 
-def suggest_budget_amount(session: Session, target_month: int, target_year: int) -> int:
+def suggest_budget_amount(
+    session: Session,
+    target_month: int,
+    target_year: int,
+) -> int:
     """
     Calculates a suggested budget amount (in cents) based on historical data.
     Algorithm: Average of (Median of Recent Trend) and (Median of Historical Seasonality).
@@ -200,12 +198,11 @@ def suggest_budget_amount(session: Session, target_month: int, target_year: int)
 
 
 def get_monthly_totals(
-    session: Session, start_date: date, end_date: date
+    session: Session,
+    start_date: date,
+    end_date: date,
 ) -> dict[tuple[int, int], int]:
-    """
-    Fetches transactions within a range and aggregates them by (year, month).
-    Returns a dict: {(year, month): total_cents}
-    """
+    """Fetche transactions within a range and aggregate them by year, month."""
     transactions = session.exec(
         select(Transaction).where(
             Transaction.entry_date >= start_date,
