@@ -12,3 +12,7 @@ wheels/
 # SQLite files
 *.db
 *.sqlite
+
+# Hypothesis
+.hypothesis
+!.hypothesis/examples/

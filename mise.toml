@@ -24,7 +24,7 @@ run = "uv run typer budy utils docs --output README.md --name budy"
 depends = [
   "lint",
   "typecheck",
-  # "test",
+  "test",
   "build",
   "generate-docs",
 ]
