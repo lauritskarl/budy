@@ -6,7 +6,7 @@ from typing import Optional
 
 from sqlmodel import Session, asc, select
 
-from budy.constants import MIN_YEAR
+from budy.config import settings
 from budy.schemas import Budget, BudgetSuggestion, Transaction
 
 
@@ -149,7 +149,7 @@ def suggest_budget_amount(
     from sklearn.pipeline import Pipeline
     from sklearn.preprocessing import OneHotEncoder
 
-    start_date = date(MIN_YEAR, 1, 1)
+    start_date = date(settings.min_year, 1, 1)
     end_date = date(target_year, target_month, 1)
 
     historical_data = get_monthly_totals(
