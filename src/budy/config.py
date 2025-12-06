@@ -22,15 +22,14 @@ class Settings(BaseModel):
         2. Overrides from config file (if present)
         """
         app_dir = Path(get_app_dir(APP_NAME))
+        app_dir.mkdir(parents=True, exist_ok=True)
         config_path = app_dir / "config.toml"
 
         config_data = {}
 
         if config_path.exists():
             with open(config_path, "rb") as f:
-                # Assumes config file has a [budy] section or key-values at root
                 data = tomllib.load(f)
-                # If you want keys under a [tool.budy] section, access them here
                 config_data = data
 
         return cls(**config_data)
