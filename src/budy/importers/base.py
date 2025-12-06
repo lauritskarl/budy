@@ -1,7 +1,6 @@
 from pathlib import Path
 from typing import Optional
 
-import polars as pl
 from sqlmodel import SQLModel
 
 from budy.schemas import Transaction
@@ -23,6 +22,8 @@ class BaseBankImporter(SQLModel):
     description_col: Optional[str] = None
 
     def process_file(self, file_path: Path) -> list[Transaction]:
+        import polars as pl
+
         if not file_path.exists():
             raise FileNotFoundError(f"File not found: {file_path}")
 
