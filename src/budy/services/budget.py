@@ -168,7 +168,6 @@ def suggest_budget_amount(
         y_train.append(amount)
 
     # 3. Build & Train Pipeline
-    # We one-hot encode 'Month' so the model understands "December" distinct from "January" independent of the numerical value (1 vs 12).
     preprocessor = ColumnTransformer(
         transformers=[
             ("cat", OneHotEncoder(handle_unknown="ignore"), [0]),  # Month column
@@ -189,8 +188,7 @@ def suggest_budget_amount(
     # Input must match X_train shape: [[target_month, target_year]]
     prediction = model.predict([[target_month, target_year]])
 
-    # Round to nearest 100 currency units (e.g., 100 EUR/USD)
-    # Since amount is in cents, 100 currency units is 100 * 100 = 10000 cents
+    # Round to nearest 100 currency units
     rounded_prediction = round(prediction[0] / 10000) * 10000
 
     return int(rounded_prediction)
