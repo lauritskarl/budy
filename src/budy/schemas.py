@@ -23,12 +23,14 @@ class Budget(SQLModel, table=True):
 
 
 class ForecastData(SQLModel):
+    """Represents forecast data for budgeting."""
     avg_per_day: float
     projected_total: float
     projected_overage: float | None
 
 
 class MonthlyReportData(SQLModel):
+    """Represents monthly report data, including budget and spending."""
     budget: Budget | None
     total_spent: int
     month_name: str
@@ -37,6 +39,7 @@ class MonthlyReportData(SQLModel):
 
 
 class VolatilityReportData(SQLModel):
+    """Represents data for a volatility report, including outliers."""
     total_count: int
     avg_amount: float
     stdev_amount: float
@@ -44,6 +47,7 @@ class VolatilityReportData(SQLModel):
 
 
 class WeekdayReportItem(SQLModel):
+    """Represents a single item in a weekday spending report."""
     day_name: str
     avg_amount: float
     total_amount: int
@@ -51,6 +55,7 @@ class WeekdayReportItem(SQLModel):
 
 
 class PayeeRankingItem(SQLModel):
+    """Represents a single item in a payee ranking report."""
     name: str
     count: int
     total: int
@@ -58,6 +63,7 @@ class PayeeRankingItem(SQLModel):
 
 
 class BudgetSuggestion(SQLModel):
+    """Represents a budget suggestion for a specific month."""
     month: int
     month_name: str
     amount: int

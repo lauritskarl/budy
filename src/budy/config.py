@@ -9,6 +9,7 @@ APP_NAME = "budy"
 
 
 class BankConfig(BaseModel):
+    """Configuration for a specific bank's transaction file import."""
     delimiter: str = ","
     decimal: str = "."
     encoding: str = "utf-8"
@@ -21,6 +22,7 @@ class BankConfig(BaseModel):
 
 
 class Settings(BaseModel):
+    """Application settings, loaded from defaults and optionally overridden by a config file."""
     app_name: str = APP_NAME
     currency_symbol: str = "$"
     min_year: int = 1900
@@ -61,11 +63,7 @@ class Settings(BaseModel):
 
     @classmethod
     def load(cls):
-        """
-        Loads settings from:
-        1. Defaults
-        2. Overrides from config file (if present)
-        """
+        """Loads settings from defaults and overrides from the config file."""
         app_dir = Path(get_app_dir(APP_NAME))
         app_dir.mkdir(parents=True, exist_ok=True)
         config_path = app_dir / "config.toml"

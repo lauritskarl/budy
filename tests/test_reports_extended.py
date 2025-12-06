@@ -13,6 +13,7 @@ runner = CliRunner()
 
 
 def reset_db():
+    """Resets the test database by dropping and recreating all tables."""
     SQLModel.metadata.drop_all(engine)
     SQLModel.metadata.create_all(engine)
 

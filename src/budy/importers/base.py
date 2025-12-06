@@ -7,6 +7,7 @@ from budy.schemas import Transaction
 
 
 class BaseBankImporter(SQLModel):
+    """Base class for bank statement importers. Defines common configuration and file processing logic."""
     delimiter: str = ","
     encoding: str = "utf-8"
     decimal: str = "."
@@ -22,6 +23,7 @@ class BaseBankImporter(SQLModel):
     description_col: Optional[str] = None
 
     def process_file(self, file_path: Path) -> list[Transaction]:
+        """Processes a bank statement CSV file and returns a list of Transaction objects."""
         import polars as pl
 
         if not file_path.exists():
