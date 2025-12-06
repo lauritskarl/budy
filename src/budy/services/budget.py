@@ -151,14 +151,13 @@ def suggest_budget_amount(
     from sklearn.preprocessing import OneHotEncoder
 
     start_date = date(MIN_YEAR, 1, 1)
-    end_date = date(target_year, target_month, 1)  # Up to now
+    end_date = date(target_year, target_month, 1)
 
     historical_data = get_monthly_totals(
         session=session, start_date=start_date, end_date=end_date
     )
 
     if len(historical_data) < 6:
-        # Fallback for insufficient data: return simple average or 0
         return int(mean(historical_data.values())) if historical_data else 0
 
     # 2. Prepare Training Data (X = [Month, Year], y = Amount)
@@ -170,8 +169,7 @@ def suggest_budget_amount(
         y_train.append(amount)
 
     # 3. Build & Train Pipeline
-    # We one-hot encode 'Month' so the model understands "December" distinct from "January"
-    # independent of the numerical value (1 vs 12).
+    # We one-hot encode 'Month' so the model understands "December" distinct from "January" independent of the numerical value (1 vs 12).
     preprocessor = ColumnTransformer(
         transformers=[
             ("cat", OneHotEncoder(handle_unknown="ignore"), [0]),  # Month column
@@ -192,7 +190,11 @@ def suggest_budget_amount(
     # Input must match X_train shape: [[target_month, target_year]]
     prediction = model.predict([[target_month, target_year]])
 
-    return int(prediction[0])
+    # Round to nearest 100 currency units (e.g., 100 EUR/USD)
+    # Since amount is in cents, 100 currency units is 100 * 100 = 10000 cents
+    rounded_prediction = round(prediction[0] / 10000) * 10000
+
+    return int(rounded_prediction)
 
 
 def get_monthly_totals(
