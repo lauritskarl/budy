@@ -4,5 +4,5 @@
   - [ ] automatically filter out yourself from reports
 - [ ] add update and delete functions
 - [ ] publish to PyPI
-- [ ] set up CI
+- [x] set up CI
 - [x] write tests
