@@ -5,7 +5,8 @@ from pathlib import Path
 from sqlmodel import Session, asc, col, desc, or_, select
 
 import budy.importers as importers
-from budy.schemas import Bank, Transaction
+from budy.config import settings
+from budy.schemas import Transaction
 
 
 def get_transactions(
@@ -60,21 +61,19 @@ def create_transaction(
 def import_transactions(
     *,
     session: Session,
-    bank: Bank,
+    bank_name: str,
     file_path: Path,
     dry_run: bool,
 ) -> list[Transaction]:
     """Imports transactions from a bank CSV file."""
-    importer = None
-    match bank:
-        case Bank.LHV:
-            importer = importers.LHVImporter()
-        case Bank.SEB:
-            importer = importers.SEBImporter()
-        case Bank.SWEDBANK:
-            importer = importers.SwedbankImporter()
-        case _:
-            raise ValueError(f"No importer found for {bank}")
+    bank_name_key = bank_name.lower()
+    bank_config = settings.banks.get(bank_name_key)
+
+    if not bank_config:
+        available = ", ".join(settings.banks.keys())
+        raise ValueError(f"Unknown bank '{bank_name}'. Available banks: {available}")
+
+    importer = importers.BaseBankImporter(**bank_config.model_dump())
 
     transactions = importer.process_file(file_path)
 

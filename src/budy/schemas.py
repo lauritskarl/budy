@@ -1,13 +1,6 @@
 from datetime import date
-from enum import StrEnum, auto
 
 from sqlmodel import Field, SQLModel
-
-
-class Bank(StrEnum):
-    LHV = auto()
-    SEB = auto()
-    SWEDBANK = auto()
 
 
 class Transaction(SQLModel, table=True):

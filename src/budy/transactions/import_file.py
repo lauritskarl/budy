@@ -5,8 +5,8 @@ from rich.console import Console
 from sqlmodel import Session
 from typer import Exit, Option, Typer
 
+from budy.config import settings
 from budy.database import engine
-from budy.schemas import Bank
 from budy.services.transaction import import_transactions
 from budy.views import render_error, render_import_summary
 
@@ -14,16 +14,23 @@ app = Typer(no_args_is_help=True)
 console = Console()
 
 
+def get_bank_names(incomplete: str):
+    """Autocomplete for available bank names."""
+    for name in settings.banks.keys():
+        if name.startswith(incomplete.lower()):
+            yield name
+
+
 @app.command(name="import")
 def run_import(
     bank: Annotated[
-        Bank,
+        str,
         Option(
             "--bank",
             "-b",
             prompt=True,
-            help="The bank to import from.",
-            case_sensitive=False,
+            help="The bank to import from (defined in config).",
+            autocompletion=get_bank_names,
         ),
     ],
     file_path: Annotated[
@@ -49,14 +56,14 @@ def run_import(
 ) -> None:
     """Import transactions from a bank CSV file."""
     console.print(
-        f"Parsing [bold]{file_path.name}[/] using [cyan]{bank.value}[/] importer..."
+        f"Parsing [bold]{file_path.name}[/] using [cyan]{bank}[/] importer..."
     )
 
     try:
         with Session(engine) as session:
             transactions = import_transactions(
                 session=session,
-                bank=bank,
+                bank_name=bank,
                 file_path=file_path,
                 dry_run=dry_run,
             )

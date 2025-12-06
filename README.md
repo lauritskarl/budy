@@ -84,7 +84,7 @@ $ budy transactions import [OPTIONS]
 
 **Options**:
 
-* `-b, --bank [lhv|seb|swedbank]`: The bank to import from.  [required]
+* `-b, --bank TEXT`: The bank to import from (defined in config).  [required]
 * `-f, --file FILE`: Path to the CSV file.  [required]
 * `--dry-run / --no-dry-run`: Parse the file but do not save to the database.  [default: no-dry-run]
 * `--help`: Show this message and exit.

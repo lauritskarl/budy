@@ -1,10 +1,23 @@
 import tomllib
 from pathlib import Path
+from typing import Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typer import get_app_dir
 
 APP_NAME = "budy"
+
+
+class BankConfig(BaseModel):
+    delimiter: str = ","
+    decimal: str = "."
+    encoding: str = "utf-8"
+    date_col: str
+    amount_col: str
+    debit_credit_col: str
+    debit_value: str = "D"
+    receiver_col: Optional[str] = None
+    description_col: Optional[str] = None
 
 
 class Settings(BaseModel):
@@ -13,6 +26,37 @@ class Settings(BaseModel):
     min_year: int = 1900
     max_year: int = 2100
     username: str | None = None
+    banks: dict[str, BankConfig] = Field(
+        default_factory=lambda: {
+            "lhv": BankConfig(
+                delimiter=",",
+                decimal=".",
+                date_col="Kuupäev",
+                amount_col="Summa",
+                debit_credit_col="Deebet/Kreedit (D/C)",
+                receiver_col="Saaja/maksja nimi",
+                description_col="Selgitus",
+            ),
+            "seb": BankConfig(
+                delimiter=";",
+                decimal=",",
+                date_col="Kuupäev",
+                amount_col="Summa",
+                debit_credit_col="Deebet/Kreedit (D/C)",
+                receiver_col="Saaja/maksja nimi",
+                description_col="Selgitus",
+            ),
+            "swedbank": BankConfig(
+                delimiter=";",
+                decimal=",",
+                date_col="Kuupäev",
+                amount_col="Summa",
+                debit_credit_col="Deebet/Kreedit",
+                receiver_col="Saaja/Maksja",
+                description_col="Selgitus",
+            ),
+        }
+    )
 
     @classmethod
     def load(cls):
