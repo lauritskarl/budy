@@ -1,4 +1,4 @@
-from .base_importer import BaseBankImporter
+from .base import BaseBankImporter
 
 
 class LHVImporter(BaseBankImporter):

@@ -1,4 +1,4 @@
-from .base_importer import BaseBankImporter
+from .base import BaseBankImporter
 from .lhv import LHVImporter
 from .seb import SEBImporter
 from .swedbank import SwedbankImporter

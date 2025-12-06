@@ -3,9 +3,9 @@ from pathlib import Path
 from sqlmodel import create_engine
 from typer import get_app_dir
 
-from budy.constants import APP_NAME
+from budy.config import settings
 
-app_dir = get_app_dir(APP_NAME)
+app_dir = get_app_dir(settings.app_name)
 
 app_dir_path = Path(app_dir)
 app_dir_path.mkdir(parents=True, exist_ok=True)

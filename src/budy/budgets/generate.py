@@ -6,7 +6,7 @@ from rich.prompt import Confirm
 from sqlmodel import Session
 from typer import Option, Typer
 
-from budy.constants import MAX_YEAR, MIN_YEAR
+from budy.config import settings
 from budy.database import engine
 from budy.services.budget import (
     generate_budgets_suggestions,
@@ -25,8 +25,8 @@ def generate_budgets(
         Option(
             "--year",
             "-y",
-            min=MIN_YEAR,
-            max=MAX_YEAR,
+            min=settings.min_year,
+            max=settings.max_year,
             help="Target year.",
         ),
     ] = None,

@@ -3,7 +3,7 @@ from datetime import date
 from rich.console import Group
 from rich.table import Table
 
-from budy.models import Transaction
+from budy.schemas import Transaction
 from budy.views.messages import render_success, render_warning
 
 

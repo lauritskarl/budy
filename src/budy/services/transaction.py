@@ -5,8 +5,7 @@ from pathlib import Path
 from sqlmodel import Session, asc, col, desc, or_, select
 
 import budy.importers as importers
-from budy.constants import Bank
-from budy.models import Transaction
+from budy.schemas import Bank, Transaction
 
 
 def get_transactions(

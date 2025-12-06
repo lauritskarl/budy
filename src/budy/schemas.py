@@ -1,0 +1,72 @@
+from datetime import date
+from enum import StrEnum, auto
+
+from sqlmodel import Field, SQLModel
+
+
+class Bank(StrEnum):
+    LHV = auto()
+    SEB = auto()
+    SWEDBANK = auto()
+
+
+class Transaction(SQLModel, table=True):
+    """Class that defines all transactions."""
+
+    id: int | None = Field(default=None, primary_key=True)
+    amount: int
+    entry_date: date = Field(index=True)
+    receiver: str | None = Field(default=None, index=True)
+    description: str | None = Field(default=None)
+
+
+class Budget(SQLModel, table=True):
+    """Class that defines all budgets."""
+
+    id: int | None = Field(default=None, primary_key=True)
+    amount: int
+    target_month: int = Field(index=True)
+    target_year: int = Field(index=True)
+
+
+class ForecastData(SQLModel):
+    avg_per_day: float
+    projected_total: float
+    projected_overage: float | None
+
+
+class MonthlyReportData(SQLModel):
+    budget: Budget | None
+    total_spent: int
+    month_name: str
+    target_year: int
+    forecast: ForecastData | None = None
+
+
+class VolatilityReportData(SQLModel):
+    total_count: int
+    avg_amount: float
+    stdev_amount: float
+    outliers: list[Transaction]
+
+
+class WeekdayReportItem(SQLModel):
+    day_name: str
+    avg_amount: float
+    total_amount: int
+    count: int
+
+
+class PayeeRankingItem(SQLModel):
+    name: str
+    count: int
+    total: int
+    avg: int
+
+
+class BudgetSuggestion(SQLModel):
+    month: int
+    month_name: str
+    amount: int
+    year: int
+    existing: Budget | None = None

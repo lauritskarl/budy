@@ -5,8 +5,8 @@ from rich.console import Console
 from sqlmodel import Session
 from typer import Exit, Option, Typer
 
-from budy.constants import Bank
 from budy.database import engine
+from budy.schemas import Bank
 from budy.services.transaction import import_transactions
 from budy.views import render_error, render_import_summary
 

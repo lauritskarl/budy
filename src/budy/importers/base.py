@@ -4,7 +4,7 @@ from typing import Optional
 import polars as pl
 from sqlmodel import SQLModel
 
-from budy.models import Transaction
+from budy.schemas import Transaction
 
 
 class BaseBankImporter(SQLModel):

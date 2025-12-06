@@ -2,13 +2,13 @@ from rich.console import Group
 from rich.panel import Panel
 from rich.table import Table
 
-from budy.dtos import (
+from budy.schemas import (
     MonthlyReportData,
     PayeeRankingItem,
+    Transaction,
     VolatilityReportData,
     WeekdayReportItem,
 )
-from budy.models import Transaction
 from budy.views.budget import render_budget_status
 from budy.views.transaction import render_simple_transaction_list
 

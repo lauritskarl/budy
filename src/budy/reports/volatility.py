@@ -4,7 +4,7 @@ from rich.console import Console
 from sqlmodel import Session
 from typer import Option, Typer
 
-from budy.constants import MAX_YEAR, MIN_YEAR
+from budy.config import settings
 from budy.database import engine
 from budy.services.report import get_volatility_report_data
 from budy.views import render_volatility_report, render_warning
@@ -20,8 +20,8 @@ def show_volatility_report(
         Option(
             "--year",
             "-y",
-            min=MIN_YEAR,
-            max=MAX_YEAR,
+            min=settings.min_year,
+            max=settings.max_year,
             help="Target year.",
         ),
     ] = None,

@@ -7,8 +7,7 @@ from typing import Optional
 from sqlmodel import Session, asc, select
 
 from budy.constants import MIN_YEAR
-from budy.dtos import BudgetSuggestion
-from budy.models import Budget, Transaction
+from budy.schemas import Budget, BudgetSuggestion, Transaction
 
 
 def get_budget(

@@ -5,7 +5,7 @@ from rich.console import Console
 from sqlmodel import Session
 from typer import Exit, Option, Typer, confirm
 
-from budy.constants import MAX_YEAR, MIN_YEAR
+from budy.config import settings
 from budy.database import engine
 from budy.services.budget import get_budget, upsert_budget
 from budy.views import render_warning
@@ -42,8 +42,8 @@ def create_budget(
         Option(
             "--year",
             "-y",
-            min=MIN_YEAR,
-            max=MAX_YEAR,
+            min=settings.min_year,
+            max=settings.max_year,
             help="Target year.",
         ),
     ] = None,

@@ -7,14 +7,15 @@ from typing import Optional
 
 from sqlmodel import Session, desc, func, select
 
-from budy.dtos import (
+from budy.schemas import (
+    Budget,
     ForecastData,
     MonthlyReportData,
     PayeeRankingItem,
+    Transaction,
     VolatilityReportData,
     WeekdayReportItem,
 )
-from budy.models import Budget, Transaction
 
 
 def generate_monthly_report_data(

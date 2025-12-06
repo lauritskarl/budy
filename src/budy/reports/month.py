@@ -5,7 +5,7 @@ from rich.console import Console
 from sqlmodel import Session
 from typer import Option, Typer
 
-from budy.constants import MAX_YEAR, MIN_YEAR
+from budy.config import settings
 from budy.database import engine
 from budy.services.report import generate_monthly_report_data
 from budy.views import render_budget_status, render_warning
@@ -22,7 +22,13 @@ def show_monthly_report(
     ] = None,
     year: Annotated[
         Optional[int],
-        Option("--year", "-y", min=MIN_YEAR, max=MAX_YEAR, help="Target year."),
+        Option(
+            "--year",
+            "-y",
+            min=settings.min_year,
+            max=settings.max_year,
+            help="Target year.",
+        ),
     ] = None,
 ) -> None:
     """Show the budget status report for a specific month."""

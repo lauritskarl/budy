@@ -4,8 +4,7 @@ from typing import Optional
 from rich.panel import Panel
 from rich.table import Table
 
-from budy.dtos import BudgetSuggestion, MonthlyReportData
-from budy.models import Budget
+from budy.schemas import Budget, BudgetSuggestion, MonthlyReportData
 
 
 def render_budget_list(
