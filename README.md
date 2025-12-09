@@ -194,11 +194,11 @@ $ budy reports [OPTIONS] COMMAND [ARGS]...
 **Commands**:
 
 * `month`: Show the budget status report for a...
-* `year`: Show the budget status report for a...
-* `weekday`: Analyze spending habits by day of the week.
-* `volatility`: Analyze spending volatility and outliers.
 * `search`: Search transactions by keyword in receiver...
 * `payees`: Rank payees by total spending or frequency.
+* `volatility`: Analyze spending volatility and outliers.
+* `weekday`: Analyze spending habits by day of the week.
+* `year`: Show the budget status report for a...
 
 ### `budy reports month`
 
@@ -213,50 +213,6 @@ $ budy reports month [OPTIONS]
 **Options**:
 
 * `-m, --month INTEGER RANGE`: Target month.  [1&lt;=x&lt;=12]
-* `-y, --year INTEGER RANGE`: Target year.  [1900&lt;=x&lt;=2100]
-* `--help`: Show this message and exit.
-
-### `budy reports year`
-
-Show the budget status report for a specific year.
-
-**Usage**:
-
-```console
-$ budy reports year [OPTIONS]
-```
-
-**Options**:
-
-* `-y, --year INTEGER RANGE`: Target year.  [1900&lt;=x&lt;=2100]
-* `--help`: Show this message and exit.
-
-### `budy reports weekday`
-
-Analyze spending habits by day of the week.
-
-**Usage**:
-
-```console
-$ budy reports weekday [OPTIONS]
-```
-
-**Options**:
-
-* `--help`: Show this message and exit.
-
-### `budy reports volatility`
-
-Analyze spending volatility and outliers.
-
-**Usage**:
-
-```console
-$ budy reports volatility [OPTIONS]
-```
-
-**Options**:
-
 * `-y, --year INTEGER RANGE`: Target year.  [1900&lt;=x&lt;=2100]
 * `--help`: Show this message and exit.
 
@@ -294,4 +250,48 @@ $ budy reports payees [OPTIONS]
 * `-y, --year INTEGER RANGE`: Target year.  [1900&lt;=x&lt;=2100]
 * `-l, --limit INTEGER`: Number of payees to show.  [default: 10]
 * `-c, --by-count`: Sort by transaction count instead of total amount.
+* `--help`: Show this message and exit.
+
+### `budy reports volatility`
+
+Analyze spending volatility and outliers.
+
+**Usage**:
+
+```console
+$ budy reports volatility [OPTIONS]
+```
+
+**Options**:
+
+* `-y, --year INTEGER RANGE`: Target year.  [1900&lt;=x&lt;=2100]
+* `--help`: Show this message and exit.
+
+### `budy reports weekday`
+
+Analyze spending habits by day of the week.
+
+**Usage**:
+
+```console
+$ budy reports weekday [OPTIONS]
+```
+
+**Options**:
+
+* `--help`: Show this message and exit.
+
+### `budy reports year`
+
+Show the budget status report for a specific year.
+
+**Usage**:
+
+```console
+$ budy reports year [OPTIONS]
+```
+
+**Options**:
+
+* `-y, --year INTEGER RANGE`: Target year.  [1900&lt;=x&lt;=2100]
 * `--help`: Show this message and exit.

@@ -9,7 +9,8 @@ from typer import Exit, Option, get_app_dir
 from budy.config import APP_NAME, BankConfig, Settings, settings
 from budy.database import engine
 from budy.services.transaction import import_transactions
-from budy.views import render_error, render_import_summary
+from budy.views.messages import render_error
+from budy.views.transaction import render_import_summary
 
 console = Console()
 
