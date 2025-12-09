@@ -144,11 +144,6 @@ def suggest_budget_amount(
     target_year: int,
 ) -> int:
     """Calculates a suggested budget amount (in cents) based on historical data."""
-    from sklearn.compose import ColumnTransformer
-    from sklearn.ensemble import RandomForestRegressor
-    from sklearn.pipeline import Pipeline
-    from sklearn.preprocessing import OneHotEncoder
-
     start_date = date(settings.min_year, 1, 1)
     end_date = date(target_year, target_month, 1)
 
@@ -156,40 +151,24 @@ def suggest_budget_amount(
         session=session, start_date=start_date, end_date=end_date
     )
 
-    if len(historical_data) < 6:
-        return int(mean(historical_data.values())) if historical_data else 0
+    if not historical_data:
+        return 0
 
-    # 2. Prepare Training Data (X = [Month, Year], y = Amount)
-    X_train = []
-    y_train = []
+    # Strategy 1: Seasonality (Average of this specific month from previous years)
+    same_month_amounts = [
+        amount
+        for (year, month), amount in historical_data.items()
+        if month == target_month
+    ]
 
-    for (year, month), amount in historical_data.items():
-        X_train.append([month, year])
-        y_train.append(amount)
+    if same_month_amounts:
+        prediction = mean(same_month_amounts)
+    else:
+        # Strategy 2: Fallback to global average if no seasonal data exists
+        prediction = mean(historical_data.values())
 
-    # 3. Build & Train Pipeline
-    preprocessor = ColumnTransformer(
-        transformers=[
-            ("cat", OneHotEncoder(handle_unknown="ignore"), [0]),  # Month column
-            ("num", "passthrough", [1]),  # Year column
-        ]
-    )
-
-    model = Pipeline(
-        [
-            ("preprocessor", preprocessor),
-            ("regressor", RandomForestRegressor(n_estimators=100, random_state=42)),
-        ]
-    )
-
-    model.fit(X_train, y_train)
-
-    # 4. Predict
-    # Input must match X_train shape: [[target_month, target_year]]
-    prediction = model.predict([[target_month, target_year]])
-
-    # Round to nearest 100 currency units
-    rounded_prediction = round(prediction[0] / 10000) * 10000
+    # Round to nearest 100 currency units (10000 cents) like the original model
+    rounded_prediction = round(prediction / 10000) * 10000
 
     return int(rounded_prediction)
 

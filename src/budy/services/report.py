@@ -178,9 +178,6 @@ def get_volatility_report_data(
     *, session: Session, year: int | None
 ) -> Optional[VolatilityReportData]:
     """Calculates spending volatility and identifies outliers."""
-    import numpy as np
-    from sklearn.ensemble import IsolationForest
-
     query = select(Transaction)
     if year:
         query = query.where(
@@ -203,12 +200,12 @@ def get_volatility_report_data(
     except statistics.StatisticsError:
         stdev = 0
 
-    X = np.array(amounts).reshape(-1, 1)
+    # Statistical Outlier Detection (Z-Score method)
+    # We flag transactions that are more than 2 standard deviations above the mean.
+    threshold = avg_amount + (2 * stdev)
 
-    clf = IsolationForest(contamination=0.05, random_state=42)
-    preds = clf.fit_predict(X)
-
-    outliers = [t for t, p in zip(transactions, preds) if p == -1]
+    outliers = [t for t in transactions if t.amount > threshold]
+    # Sort purely by amount for the report
     outliers.sort(key=lambda t: t.amount, reverse=True)
 
     return VolatilityReportData(
