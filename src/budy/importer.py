@@ -8,6 +8,7 @@ from budy.schemas import Transaction
 
 class BaseBankImporter(SQLModel):
     """Base class for bank statement importers. Defines common configuration and file processing logic."""
+
     delimiter: str = ","
     encoding: str = "utf-8"
     decimal: str = "."
@@ -58,6 +59,8 @@ class BaseBankImporter(SQLModel):
             )
 
             # 2. Parse Amount (handle cents)
+            # We must .round() before casting to Int64 to handle floating point imprecision.
+            # E.g., 19.999999 should become 20, not truncated to 19.
             q = q.with_columns(
                 (pl.col(self.amount_col).abs() * 100)
                 .round()

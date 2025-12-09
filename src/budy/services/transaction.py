@@ -4,8 +4,8 @@ from pathlib import Path
 
 from sqlmodel import Session, asc, col, desc, or_, select
 
-import budy.importers as importers
 from budy.config import settings
+from budy.importer import BaseBankImporter
 from budy.schemas import Transaction
 
 
@@ -73,7 +73,7 @@ def import_transactions(
         available = ", ".join(settings.banks.keys())
         raise ValueError(f"Unknown bank '{bank_name}'. Available banks: {available}")
 
-    importer = importers.BaseBankImporter(**bank_config.model_dump())
+    importer = BaseBankImporter(**bank_config.model_dump())
 
     transactions = importer.process_file(file_path)
 
