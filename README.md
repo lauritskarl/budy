@@ -155,7 +155,7 @@ $ budy budgets list [OPTIONS]
 
 **Options**:
 
-* `-y, --year INTEGER`: Filter by year.  [default: 2025]
+* `-y, --year INTEGER`: Filter by year.  [default: 2026]
 * `-o, --offset INTEGER`: Skip the first N entries.  [default: 0]
 * `-l, --limit INTEGER`: Limit the number of entries shown.  [default: 12]
 * `--help`: Show this message and exit.
