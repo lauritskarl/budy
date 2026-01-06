@@ -58,6 +58,46 @@ def create_transaction(
     return transaction
 
 
+def update_transaction(
+    *,
+    session: Session,
+    transaction_id: int,
+    amount: float | None = None,
+    entry_date: date | None = None,
+    receiver: str | None = None,
+    description: str | None = None,
+) -> Transaction | None:
+    """Updates an existing transaction."""
+    transaction = session.get(Transaction, transaction_id)
+    if not transaction:
+        return None
+
+    if amount is not None:
+        transaction.amount = int(round(amount * 100))
+    if entry_date is not None:
+        transaction.entry_date = entry_date
+    if receiver is not None:
+        transaction.receiver = receiver
+    if description is not None:
+        transaction.description = description
+
+    session.add(transaction)
+    session.commit()
+    session.refresh(transaction)
+    return transaction
+
+
+def delete_transaction(*, session: Session, transaction_id: int) -> bool:
+    """Deletes a transaction by ID."""
+    transaction = session.get(Transaction, transaction_id)
+    if not transaction:
+        return False
+
+    session.delete(transaction)
+    session.commit()
+    return True
+
+
 def import_transactions(
     *,
     session: Session,

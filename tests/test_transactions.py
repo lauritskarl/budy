@@ -70,3 +70,68 @@ def test_list_transactions(transactions):
         assert f"{app_settings.currency_symbol}{last_amt:,.2f}" in result.stdout
     else:
         assert f"{app_settings.currency_symbol}0.00" in result.stdout
+
+
+@given(
+    amount=st.decimals(
+        min_value=Decimal("0.01"), max_value=Decimal("9999999"), places=2
+    ),
+    txn_date=st.dates(min_value=date(1900, 1, 1), max_value=date(2100, 12, 31)),
+    new_amount=st.decimals(
+        min_value=Decimal("0.01"), max_value=Decimal("9999999"), places=2
+    ),
+)
+def test_update_transaction(amount, txn_date, new_amount):
+    """Property: Updating a transaction works."""
+    reset_db()
+    runner = CliRunner()
+
+    # Create
+    with Session(engine) as session:
+        txn = Transaction(amount=int(amount * 100), entry_date=txn_date)
+        session.add(txn)
+        session.commit()
+        session.refresh(txn)
+        txn_id = txn.id
+
+    # Update
+    result = runner.invoke(
+        app, ["transactions", "update", str(txn_id), "--amount", str(new_amount)]
+    )
+    assert result.exit_code == 0
+    assert "Updated" in result.stdout
+
+    # Verify
+    with Session(engine) as session:
+        updated_txn = session.get(Transaction, txn_id)
+        assert updated_txn is not None
+        assert updated_txn.amount == int(new_amount * 100)
+
+
+@given(
+    amount=st.decimals(
+        min_value=Decimal("0.01"), max_value=Decimal("9999999"), places=2
+    ),
+)
+def test_delete_transaction(amount):
+    """Property: Deleting a transaction works."""
+    reset_db()
+    runner = CliRunner()
+
+    # Create
+    with Session(engine) as session:
+        txn = Transaction(amount=int(amount * 100), entry_date=date.today())
+        session.add(txn)
+        session.commit()
+        session.refresh(txn)
+        txn_id = txn.id
+
+    # Delete with force
+    result = runner.invoke(app, ["transactions", "delete", str(txn_id), "--force"])
+    assert result.exit_code == 0
+    assert "Deleted" in result.stdout
+
+    # Verify
+    with Session(engine) as session:
+        deleted_txn = session.get(Transaction, txn_id)
+        assert deleted_txn is None

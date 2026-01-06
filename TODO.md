@@ -1,4 +1,4 @@
 # budy todos
 
-- [ ] add update and delete functions
+- [x] add update and delete functions
 - [ ] publish to PyPI

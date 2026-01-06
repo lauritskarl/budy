@@ -4,14 +4,16 @@ from typing import Annotated, Optional
 
 from rich.console import Console
 from sqlmodel import Session
-from typer import Exit, Option, Typer
+from typer import Argument, Exit, Option, Typer, confirm
 
 from budy.config import settings
 from budy.database import engine
 from budy.services.transaction import (
     create_transaction,
+    delete_transaction,
     get_transactions,
     import_transactions,
+    update_transaction,
 )
 from budy.views.messages import (
     render_error,
@@ -99,6 +101,98 @@ def read_transactions(
         return
 
     console.print(render_transaction_list(daily_transactions=transactions))
+
+
+@app.command(name="update")
+def update_txn(
+    transaction_id: Annotated[int, Argument(help="ID of the transaction to update.")],
+    amount: Annotated[
+        Optional[float],
+        Option(
+            "--amount",
+            "-a",
+            min=0.01,
+            max=9999999,
+            help="New amount.",
+        ),
+    ] = None,
+    txn_date: Annotated[
+        Optional[datetime],
+        Option(
+            "--date",
+            "-d",
+            formats=["%Y-%m-%d", "%Y/%m/%d"],
+            help="New date (YYYY-MM-DD).",
+        ),
+    ] = None,
+    receiver: Annotated[
+        Optional[str],
+        Option(
+            "--receiver",
+            "-r",
+            help="New receiver/payee.",
+        ),
+    ] = None,
+    description: Annotated[
+        Optional[str],
+        Option(
+            "--description",
+            "--desc",
+            help="New description.",
+        ),
+    ] = None,
+) -> None:
+    """Update an existing transaction."""
+    final_date = txn_date.date() if txn_date else None
+
+    with Session(engine) as session:
+        transaction = update_transaction(
+            session=session,
+            transaction_id=transaction_id,
+            amount=amount,
+            entry_date=final_date,
+            receiver=receiver,
+            description=description,
+        )
+
+    if not transaction:
+        console.print(render_error(message=f"Transaction #{transaction_id} not found."))
+        raise Exit(1)
+
+    console.print(
+        render_success(message=f"Updated transaction [bold]#{transaction.id}[/]")
+    )
+
+
+@app.command(name="delete")
+def delete_txn(
+    transaction_id: Annotated[int, Argument(help="ID of the transaction to delete.")],
+    force: Annotated[
+        bool,
+        Option(
+            "--force",
+            "-f",
+            help="Force delete without confirmation.",
+        ),
+    ] = False,
+) -> None:
+    """Delete a transaction."""
+    if not force:
+        if not confirm(
+            f"Are you sure you want to delete transaction #{transaction_id}?"
+        ):
+            raise Exit()
+
+    with Session(engine) as session:
+        success = delete_transaction(session=session, transaction_id=transaction_id)
+
+    if not success:
+        console.print(render_error(message=f"Transaction #{transaction_id} not found."))
+        raise Exit(1)
+
+    console.print(
+        render_success(message=f"Deleted transaction [bold]#{transaction_id}[/]")
+    )
 
 
 def get_bank_names(incomplete: str):
