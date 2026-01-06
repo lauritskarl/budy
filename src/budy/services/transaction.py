@@ -47,11 +47,16 @@ def create_transaction(
     session: Session,
     amount: float,
     entry_date: date | None = None,
+    category_id: int | None = None,
 ) -> Transaction:
     """Creates and saves a new transaction."""
     final_date = entry_date or date.today()
     amount_cents = int(round(amount * 100))
-    transaction = Transaction(amount=amount_cents, entry_date=final_date)
+    transaction = Transaction(
+        amount=amount_cents,
+        entry_date=final_date,
+        category_id=category_id,
+    )
     session.add(transaction)
     session.commit()
     session.refresh(transaction)
@@ -66,6 +71,7 @@ def update_transaction(
     entry_date: date | None = None,
     receiver: str | None = None,
     description: str | None = None,
+    category_id: int | None = None,
 ) -> Transaction | None:
     """Updates an existing transaction."""
     transaction = session.get(Transaction, transaction_id)
@@ -80,6 +86,8 @@ def update_transaction(
         transaction.receiver = receiver
     if description is not None:
         transaction.description = description
+    if category_id is not None:
+        transaction.category_id = category_id
 
     session.add(transaction)
     session.commit()

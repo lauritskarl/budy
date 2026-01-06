@@ -51,6 +51,14 @@ def add_transaction(
             help="Set the transaction date (YYYY-MM-DD).",
         ),
     ] = None,
+    category_id: Annotated[
+        Optional[int],
+        Option(
+            "--category",
+            "-c",
+            help="Category ID.",
+        ),
+    ] = None,
 ) -> None:
     """Add a new transaction to the database."""
     final_date = txn_date.date() if txn_date else date.today()
@@ -60,6 +68,7 @@ def add_transaction(
             session=session,
             amount=amount,
             entry_date=final_date,
+            category_id=category_id,
         )
 
     console.print(
@@ -141,6 +150,14 @@ def update_txn(
             help="New description.",
         ),
     ] = None,
+    category_id: Annotated[
+        Optional[int],
+        Option(
+            "--category",
+            "-c",
+            help="New Category ID.",
+        ),
+    ] = None,
 ) -> None:
     """Update an existing transaction."""
     final_date = txn_date.date() if txn_date else None
@@ -153,6 +170,7 @@ def update_txn(
             entry_date=final_date,
             receiver=receiver,
             description=description,
+            category_id=category_id,
         )
 
     if not transaction:
