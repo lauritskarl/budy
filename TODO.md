@@ -11,9 +11,9 @@
   - [x] Add CLI group `budy categories` with `list`, `add`, `delete` commands
   - [x] Update `budy transactions add` and `update` commands to support `--category`
 
-- [ ] **Data Export** (Feature)
-  - [ ] Create `export_transactions` service using Polars
-  - [ ] Add `budy transactions export` command (supports CSV and JSON)
+- [x] **Data Export** (Feature)
+  - [x] Create `export_transactions` service using Polars
+  - [x] Add `budy transactions export` command (supports CSV and JSON)
 
 - [ ] **Auto-Categorization** (Feature)
   - [ ] Create `CategoryRule` model (`id`, `pattern`, `category_id`)

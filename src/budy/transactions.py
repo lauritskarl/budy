@@ -15,6 +15,7 @@ from budy.services.transaction import (
     import_transactions,
     update_transaction,
 )
+from budy.services.export import export_transactions
 from budy.views.messages import (
     render_error,
     render_success,
@@ -211,6 +212,46 @@ def delete_txn(
     console.print(
         render_success(message=f"Deleted transaction [bold]#{transaction_id}[/]")
     )
+
+
+@app.command(name="export")
+def export_cmd(
+    output: Annotated[
+        Path,
+        Option(
+            "--output",
+            "-o",
+            prompt=True,
+            help="Path to save the export file.",
+        ),
+    ],
+    format: Annotated[
+        str,
+        Option(
+            "--format",
+            "-f",
+            help="Output format (csv, json).",
+        ),
+    ] = "csv",
+) -> None:
+    """Export transactions to CSV or JSON."""
+    try:
+        with Session(engine) as session:
+            count = export_transactions(
+                session=session, output_format=format, output_path=output
+            )
+
+        if count == 0:
+            console.print(render_warning(message="No transactions found to export."))
+        else:
+            console.print(
+                render_success(
+                    message=f"Exported [bold]{count}[/] transactions to {output}"
+                )
+            )
+    except Exception as e:
+        console.print(render_error(message=f"Export failed: {e}"))
+        raise Exit(1)
 
 
 def get_bank_names(incomplete: str):
