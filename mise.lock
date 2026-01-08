@@ -23,9 +23,9 @@ version = "3.51.1"
 backend = "asdf:sqlite"
 
 [[tools.ty]]
-version = "0.0.9"
+version = "0.0.10"
 backend = "github:astral-sh/ty"
-"platforms.macos-arm64" = { checksum = "sha256:5f9d6dd74716c7ba74328cdd2b3b8acd401f8d58e8bf68006207260608815df6", url = "https://github.com/astral-sh/ty/releases/download/0.0.9/ty-aarch64-apple-darwin.tar.gz", url_api = "https://api.github.com/repos/astral-sh/ty/releases/assets/336537821"}
+"platforms.macos-arm64" = { checksum = "sha256:5c256844da0401534908535d3c744ffb28db823e2e21ebc2aa45fa4b0599f6f5", url = "https://github.com/astral-sh/ty/releases/download/0.0.10/ty-aarch64-apple-darwin.tar.gz", url_api = "https://api.github.com/repos/astral-sh/ty/releases/assets/337612187"}
 
 [[tools.uv]]
 version = "0.9.22"
