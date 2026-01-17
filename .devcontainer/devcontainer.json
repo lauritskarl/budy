@@ -6,6 +6,8 @@
   },
   "customizations": {},
   "mounts": [],
-  "containerEnv": {},
+  "containerEnv": {
+    "MISE_AGE_KEY": "${localEnv:MISE_AGE_KEY}"
+  },
   "remoteEnv": {}
 }
